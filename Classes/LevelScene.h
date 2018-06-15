@@ -22,14 +22,14 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-#ifndef __HELLOWORLD_SCENE_H__
-#define __HELLOWORLD_SCENE_H__
+#ifndef __LEVEL_SCENE_H__
+#define __LEVEL_SCENE_H__
 
 #include "cocos2d.h"
 
 using namespace cocos2d;
 
-class HelloWorld : public cocos2d::Scene {
+class Level : public cocos2d::Scene {
 private:
 	Sprite* _player;
 public:
@@ -41,7 +41,7 @@ public:
 	virtual bool spawnBall();
 	bool checkBall();
 
-    CREATE_FUNC(HelloWorld);
+    CREATE_FUNC(Level);
 };
 
-#endif // __HELLOWORLD_SCENE_H__
+#endif // __LEVEL_SCENE_H__

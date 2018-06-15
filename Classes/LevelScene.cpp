@@ -22,23 +22,23 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-#include "HelloWorldScene.h"
+#include "LevelScene.h"
 #include "SimpleAudioEngine.h"
 
 USING_NS_CC;
 
-Scene* HelloWorld::createScene()
+Scene* Level::createScene()
 {
 	// 'scene' is an autorelease object
 	auto scene = Scene::create();
-	auto layer = HelloWorld::create();
+	auto layer = Level::create();
 
 	scene->addChild(layer);
 
 	return scene;
 }
 
-bool HelloWorld::init()
+bool Level::init()
 {
     if ( !Scene::init() )
     {
@@ -72,14 +72,14 @@ bool HelloWorld::init()
     return true;
 }
 
-bool HelloWorld::spawnBlocks() {
+bool Level::spawnBlocks() {
 	return true;
 }
 
-bool HelloWorld::spawnBall() {
+bool Level::spawnBall() {
 	return true;
 }
 
-bool HelloWorld::checkBall() {
+bool Level::checkBall() {
 	return true;
 }
