@@ -27,18 +27,22 @@
 
 #include "cocos2d.h"
 
+class Ball;
+class GameBlock;
+
 using namespace cocos2d;
 
-class Level : public cocos2d::Scene {
+class Level : public Scene {
 private:
 	Sprite* _player;
+	Ball* _ball;
+	std::vector<GameBlock*> _blocks;
 public:
     static Scene* createScene();
     virtual bool init();
 
 	// Scene Utility Functions
-	virtual bool spawnBlocks();
-	virtual bool spawnBall();
+	virtual bool spawnBlocks(const int num, const Vec2& minLoc, const Vec2& maxLoc);
 	bool checkBall();
 
     CREATE_FUNC(Level);

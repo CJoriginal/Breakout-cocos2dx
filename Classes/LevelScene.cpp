@@ -24,8 +24,17 @@
 
 #include "LevelScene.h"
 #include "SimpleAudioEngine.h"
+#include "Ball.h"
+#include "GameBlock.h"
 
 USING_NS_CC;
+
+enum class PhysicsCategory {
+	None = 0,
+	Player = (1 << 0),    // 1
+	Block = (1 << 1), // 2
+	//All = (PhysicsCategory::Player | PhysicsCategory::Block) // 3
+};
 
 Scene* Level::createScene()
 {
@@ -55,12 +64,16 @@ bool Level::init()
 
 	// Spawn player
 	_player = Sprite::create("player.png");
-	_player->setPosition(Vec2(winSize.width * 0.1f, winSize.height * 0.5f));
+	_player->setPosition(Vec2(winSize.width * 0.5f, winSize.height * 0.2f));
 	this->addChild(_player);
 
 	// Spawn Collidable Blocks
+	spawnBlocks(5, Vec2(winSize.width * 0.2f, winSize.height * 0.2f), Vec2(winSize.width * 0.8f, winSize.height * 0.8f));
 
 	// Spawn Wrecking Ball
+	_ball = Ball::create();
+	_ball->setPosition(Vec2(winSize.width * 0.5f, winSize.height * 0.2f));
+	this->addChild(_ball);
 
 	// Check Ball Exists. 
 	// If not, deduct life and spawn next ball if lives remain
@@ -72,11 +85,25 @@ bool Level::init()
     return true;
 }
 
-bool Level::spawnBlocks() {
-	return true;
-}
+bool Level::spawnBlocks(const int num, const Vec2& min, const Vec2& max) {
+	for (int i = 0; i < num; i++) {
+		auto block = GameBlock::create();
+		auto blockSize = block->getContentSize();
 
-bool Level::spawnBall() {
+		auto randomX = (rand() % (int)(max.x - min.x)) + min.x;
+		auto randomY = (rand() % (int)(max.y - min.y)) + min.y;
+
+		block->setPosition(Vec2(randomX, randomY));
+		this->addChild(block);
+
+		_blocks.push_back(block);
+	}
+
+	if (!_blocks.size()) 
+	{
+		return false;
+	}
+
 	return true;
 }
 
