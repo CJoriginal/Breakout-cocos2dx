@@ -12,3 +12,11 @@ bool GameBlock::init()
 
 	return true;
 }
+
+GameBlock* GameBlock::createScoreBlock(const Vec2& location)
+{
+	GameBlock* block = GameBlock::create();
+	block->setPosition(location);
+	return block;
+}
+

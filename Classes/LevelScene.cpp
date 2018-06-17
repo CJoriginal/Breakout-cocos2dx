@@ -24,6 +24,7 @@
 
 #include "LevelScene.h"
 #include "SimpleAudioEngine.h"
+#include "Player.h"
 #include "Ball.h"
 #include "GameBlock.h"
 
@@ -63,16 +64,40 @@ bool Level::init()
 	this->addChild(background);
 
 	// Spawn player
-	_player = Sprite::create("player.png");
+	_player = Player::create();
 	_player->setPosition(Vec2(winSize.width * 0.5f, winSize.height * 0.2f));
 	this->addChild(_player);
 
+	// Fill Block Locations
+	std::vector<Vec2> blockLocations = {
+		// First Row
+		Vec2(200.0f, -100.0f),
+		Vec2(350.0f, -100.0f),
+		Vec2(500.0f, -100.0f),
+		Vec2(650.0f, -100.0f),
+		Vec2(800.0f, -100.0f),
+		// Second Row
+		Vec2(275.0f, -150.0f),
+		Vec2(425.0f, -150.0f),
+		Vec2(575.0f, -150.0f),
+		Vec2(725.0f, -150.0f),
+		// Third Row
+		Vec2(350.0f, -200.0f),
+		Vec2(500.0f, -200.0f),
+		Vec2(650.0f, -200.0f),
+		// Fourth Row
+		Vec2(425.0f, -250.0f),
+		Vec2(575.0f, -250.0f),
+		// Sixth Row
+		Vec2(500.0f, -300.0f),
+	};
+
 	// Spawn Collidable Blocks
-	spawnBlocks(5, Vec2(winSize.width * 0.2f, winSize.height * 0.2f), Vec2(winSize.width * 0.8f, winSize.height * 0.8f));
+	spawnBlocks(blockLocations);
 
 	// Spawn Wrecking Ball
 	_ball = Ball::create();
-	_ball->setPosition(Vec2(winSize.width * 0.5f, winSize.height * 0.2f));
+	_ball->setPosition(Vec2(winSize.width * 0.5f, winSize.height * 0.4f));
 	this->addChild(_ball);
 
 	// Check Ball Exists. 
@@ -85,21 +110,22 @@ bool Level::init()
     return true;
 }
 
-bool Level::spawnBlocks(const int num, const Vec2& min, const Vec2& max) {
-	for (int i = 0; i < num; i++) {
-		auto block = GameBlock::create();
-		auto blockSize = block->getContentSize();
+bool Level::spawnBlocks(const std::vector<Vec2>& locations) {
+	if (!locations.size())
+	{
+		return false;
+	}
 
-		auto randomX = (rand() % (int)(max.x - min.x)) + min.x;
-		auto randomY = (rand() % (int)(max.y - min.y)) + min.y;
+	auto winSize = Director::getInstance()->getVisibleSize();
+	const Vec2 top = Vec2(0.0f, winSize.height);
 
-		block->setPosition(Vec2(randomX, randomY));
+	for (const Vec2& location : locations) {
+		auto block = GameBlock::createScoreBlock(top + location);
 		this->addChild(block);
-
 		_blocks.push_back(block);
 	}
 
-	if (!_blocks.size()) 
+	if (!_blocks.size())
 	{
 		return false;
 	}
