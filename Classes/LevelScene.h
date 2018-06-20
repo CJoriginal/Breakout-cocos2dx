@@ -35,14 +35,17 @@ class Level : public cocos2d::Scene {
 private:
 	Player* _player;
 	Ball* _ball;
-	std::vector<GameBlock*> _blocks;
+	std::vector<std::vector<GameBlock*>> _blocks;
+	bool start;
 public:
     static cocos2d::Scene* createScene();
     virtual bool init();
 
 	// Scene Utility Functions
-	virtual bool spawnBlocks(const std::vector<cocos2d::Vec2>& locations);
+	virtual bool spawnBlocks();
 	bool checkBall();
+
+	void onMouseUp(cocos2d::Event *event);
 
     CREATE_FUNC(Level);
 };

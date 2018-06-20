@@ -34,7 +34,7 @@ enum class PhysicsCategory {
 	None = 0,
 	Player = (1 << 0),    // 1
 	Block = (1 << 1), // 2
-	//All = (PhysicsCategory::Player | PhysicsCategory::Block) // 3
+	All = (Player | Block) // 3
 };
 
 Scene* Level::createScene()
@@ -58,6 +58,8 @@ bool Level::init()
 	auto origin = Director::getInstance()->getVisibleOrigin();
 	auto winSize = Director::getInstance()->getVisibleSize();
 
+	start = false;
+
 	// Draw Background
 	auto background = DrawNode::create();
 	background->drawSolidRect(origin, winSize, Color4F(0.6f, 0.6f, 0.6f, 1.0f));
@@ -68,61 +70,96 @@ bool Level::init()
 	_player->setPosition(Vec2(winSize.width * 0.5f, winSize.height * 0.2f));
 	this->addChild(_player);
 
-	// Fill Block Locations
-	std::vector<Vec2> blockLocations = {
-		// First Row
-		Vec2(200.0f, -100.0f),
-		Vec2(350.0f, -100.0f),
-		Vec2(500.0f, -100.0f),
-		Vec2(650.0f, -100.0f),
-		Vec2(800.0f, -100.0f),
-		// Second Row
-		Vec2(275.0f, -150.0f),
-		Vec2(425.0f, -150.0f),
-		Vec2(575.0f, -150.0f),
-		Vec2(725.0f, -150.0f),
-		// Third Row
-		Vec2(350.0f, -200.0f),
-		Vec2(500.0f, -200.0f),
-		Vec2(650.0f, -200.0f),
-		// Fourth Row
-		Vec2(425.0f, -250.0f),
-		Vec2(575.0f, -250.0f),
-		// Sixth Row
-		Vec2(500.0f, -300.0f),
-	};
-
 	// Spawn Collidable Blocks
-	spawnBlocks(blockLocations);
-
-	// Spawn Wrecking Ball
-	_ball = Ball::create();
-	_ball->setPosition(Vec2(winSize.width * 0.5f, winSize.height * 0.4f));
-	this->addChild(_ball);
+	spawnBlocks();
 
 	// Check Ball Exists. 
 	// If not, deduct life and spawn next ball if lives remain
 
 	// Add Event Listeners
+	auto mouseListener = EventListenerMouse::create();
+	mouseListener->onMouseUp = CC_CALLBACK_1(Level::onMouseUp, this);
+	_eventDispatcher->addEventListenerWithSceneGraphPriority(mouseListener, this);
 
 	// Add Collision Handlers
+	this->scheduleUpdate();
 
     return true;
 }
 
-bool Level::spawnBlocks(const std::vector<Vec2>& locations) {
-	if (!locations.size())
+void Level::onMouseUp(cocos2d::Event* event) {
+	// If we have already performed the startup, do not execute.
+	if (start)
 	{
-		return false;
+		return;
 	}
 
-	auto winSize = Director::getInstance()->getVisibleSize();
-	const Vec2 top = Vec2(0.0f, winSize.height);
+	EventMouse* mouseEvent = dynamic_cast<EventMouse*>(event);
 
-	for (const Vec2& location : locations) {
-		auto block = GameBlock::createScoreBlock(top + location);
-		this->addChild(block);
-		_blocks.push_back(block);
+	// Check Mouse Event is valid
+	if (!mouseEvent)
+	{
+		cocos2d::log("Could not start game due to bad cast");
+		return;
+	}
+
+	// If player clicks left button, start the game
+	if (EventMouse::MouseButton::BUTTON_LEFT == mouseEvent->getMouseButton())
+	{
+		start = true;
+
+		auto origin = Director::getInstance()->getVisibleOrigin();
+		auto winSize = Director::getInstance()->getVisibleSize();
+
+		// Spawn Wrecking Ball
+		_ball = Ball::create();
+		_ball->setPosition(Vec2(winSize.width * 0.5f, winSize.height * 0.4f));
+		this->addChild(_ball);
+	}
+}
+
+bool Level::spawnBlocks() {
+	// Initialise Block Container
+	_blocks = std::vector<std::vector<GameBlock*>>(8);
+
+	// Set starting position for grid iteration
+	float startingX = 125.0f;
+	float startingY = 800.0f;
+
+	// Fill Block Container with blocks
+	for (int i = 0; i < 8; i++) {
+		std::vector<GameBlock*> row(14);
+
+		for (int j = 0; j < 14; j++) {
+			Vec2 location = Vec2(startingX + (60.0f * j), startingY + (-20.0f * i));
+
+			GameBlock* block;
+
+			if (i < 2) {
+				block = RedBlock::create();
+			}
+			else if (i >= 2 && i < 4) {
+				block = OrangeBlock::create();
+			}
+			else if (i >= 2 && i < 6) {
+				block = GreenBlock::create();
+			}
+			else {
+				block = YellowBlock::create();
+			}
+
+			if (!block)
+			{
+				return false;
+			}
+
+			block->setPosition(location);
+
+			this->addChild(block);
+			row.push_back(block);
+		}
+
+		_blocks.push_back(row);
 	}
 
 	if (!_blocks.size())
