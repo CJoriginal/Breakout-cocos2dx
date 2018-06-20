@@ -13,10 +13,50 @@ bool GameBlock::init()
 	return true;
 }
 
-GameBlock* GameBlock::createScoreBlock(const Vec2& location)
+bool RedBlock::init()
 {
-	GameBlock* block = GameBlock::create();
-	block->setPosition(location);
-	return block;
+	if (!Sprite::initWithFile("redscore.png"))
+	{
+		return false;
+	}
+
+	value = 7;
+
+	return true;
 }
 
+bool OrangeBlock::init()
+{
+	if (!Sprite::initWithFile("orangescore.png"))
+	{
+		return false;
+	}
+
+	value = 5;
+
+	return true;
+}
+
+bool GreenBlock::init()
+{
+	if (!Sprite::initWithFile("greenscore.png"))
+	{
+		return false;
+	}
+
+	value = 3;
+
+	return true;
+}
+
+bool YellowBlock::init()
+{
+	if (!Sprite::initWithFile("yellowscore.png"))
+	{
+		return false;
+	}
+
+	value = 1;
+
+	return true;
+}
