@@ -1,5 +1,6 @@
 #include "Player.h"
 #include "SimpleAudioEngine.h"
+#include "Ball.h"
 
 USING_NS_CC;
 
@@ -9,6 +10,13 @@ bool Player::init()
 	{
 		return false;
 	}
+
+	// Add Physics Body
+	auto body = PhysicsBody::createBox(getContentSize());
+	body->setDynamic(true);
+	body->setCollisionBitmask(1);
+	body->setContactTestBitmask(true);
+	setPhysicsBody(body);
 
 	// Setup Player Movement
 	auto kbListener = EventListenerKeyboard::create();

@@ -40,7 +40,14 @@ enum class PhysicsCategory {
 Scene* Level::createScene()
 {
 	// 'scene' is an autorelease object
-	auto scene = Scene::create();
+	auto scene = Scene::createWithPhysics();
+
+	// Disable Gravity
+	scene->getPhysicsWorld()->setGravity(Vec2(0.0f, 0.0f));
+
+	// Display Debug Drawing for Physic Objects
+	scene->getPhysicsWorld()->setDebugDrawMask(0xffff);
+
 	auto layer = Level::create();
 
 	scene->addChild(layer);
@@ -82,6 +89,10 @@ bool Level::init()
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(mouseListener, this);
 
 	// Add Collision Handlers
+	auto contactListener = EventListenerPhysicsContact::create();
+	contactListener->onContactBegin = CC_CALLBACK_1(Level::onContactBegin, this);
+	_eventDispatcher->addEventListenerWithSceneGraphPriority(contactListener, this);
+
 	this->scheduleUpdate();
 
     return true;
@@ -116,6 +127,40 @@ void Level::onMouseUp(cocos2d::Event* event) {
 		_ball->setPosition(Vec2(winSize.width * 0.5f, winSize.height * 0.4f));
 		this->addChild(_ball);
 	}
+}
+
+bool Level::onContactBegin(cocos2d::PhysicsContact &contact)
+{
+	PhysicsBody *a = contact.getShapeA()->getBody();
+	PhysicsBody *b = contact.getShapeB()->getBody();
+
+	if ((1 == a->getCollisionBitmask() && 2 == b->getCollisionBitmask()) || (2 == a->getCollisionBitmask() && 1 == b->getCollisionBitmask()))
+	{
+		Ball* ball = static_cast<Ball*>(a->getOwner());
+
+		if (ball)
+		{
+			Player* player = dynamic_cast<Player*>(b->getOwner());
+			if (player)
+			{
+				_ball->handleCollision(player->getContentSize(), player->getPosition());
+			}
+
+			GameBlock* block = dynamic_cast<GameBlock*>(b->getOwner());
+			if (block)
+			{
+				_ball->handleCollision(block->getContentSize(), block->getPosition());
+				_score += block->value;
+				block->removeFromParentAndCleanup(true);
+			}
+
+			return true;
+		}
+	}
+
+	cocos2d::log("Did not collide");
+
+	return false;
 }
 
 bool Level::spawnBlocks() {
@@ -167,9 +212,5 @@ bool Level::spawnBlocks() {
 		return false;
 	}
 
-	return true;
-}
-
-bool Level::checkBall() {
 	return true;
 }

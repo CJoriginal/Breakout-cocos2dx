@@ -46,6 +46,7 @@ public:
 	bool checkBall();
 
 	void onMouseUp(cocos2d::Event *event);
+	bool onContactBegin(cocos2d::PhysicsContact &contact);
 
     CREATE_FUNC(Level);
 };

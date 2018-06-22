@@ -7,10 +7,25 @@ using namespace cocos2d;
 
 class Ball : public Sprite
 {
+private:
+	Vec2 _startPosition;
+	float _magnitude;
+	Vec2 _velocity;
+	bool _moving;
+protected:
+	void update(float dt) override;
 public:
 	// implement the "static create()" method manually
 	CREATE_FUNC(Ball);
 	bool init() override;
+	inline void startMovement() { _moving = true;}
+
+	inline Vec2& getVelocity() { return _velocity; }
+	inline void setVelocity(const Vec2& newVelocity) { _velocity = newVelocity; };
+
+	void handleCollision(const Size& size, const Vec2& position);
+
+	bool checkBounds();
 };
 
 #endif // __BALL_H__

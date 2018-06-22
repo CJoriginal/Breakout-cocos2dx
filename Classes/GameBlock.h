@@ -8,7 +8,11 @@ class GameBlock : public cocos2d::Sprite
 public:
 	CREATE_FUNC(GameBlock);
 	bool init() override;
+	virtual bool init(std::string filename);
 	int value;
+
+protected:
+	bool setupPhysics();
 };
 
 class RedBlock : public GameBlock

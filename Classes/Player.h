@@ -5,6 +5,8 @@
 
 using namespace cocos2d;
 
+class Ball;
+
 class Player : public Sprite
 {
 public:
@@ -19,8 +21,8 @@ protected:
 
 private:
 	bool move(float dt);
-
 	bool moving;
+
 	// 0 - Left, 1 - Right
 	int direction;
 };
