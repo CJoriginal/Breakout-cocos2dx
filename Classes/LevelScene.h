@@ -36,17 +36,23 @@ private:
 	Player* _player;
 	Ball* _ball;
 	std::vector<std::vector<GameBlock*>> _blocks;
-	bool start;
+	bool _start;
+	int _score;
+	int _lives;
+
+protected:
+	virtual bool init();
+	void onMouseUp(cocos2d::Event *event);
+	bool onContactBegin(cocos2d::PhysicsContact &contact);
+	void update(float dt) override;
+
 public:
     static cocos2d::Scene* createScene();
-    virtual bool init();
 
 	// Scene Utility Functions
 	virtual bool spawnBlocks();
-	bool checkBall();
 
-	void onMouseUp(cocos2d::Event *event);
-	bool onContactBegin(cocos2d::PhysicsContact &contact);
+	void resetBall();
 
     CREATE_FUNC(Level);
 };

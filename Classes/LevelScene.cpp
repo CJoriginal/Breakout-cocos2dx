@@ -65,7 +65,10 @@ bool Level::init()
 	auto origin = Director::getInstance()->getVisibleOrigin();
 	auto winSize = Director::getInstance()->getVisibleSize();
 
-	start = false;
+	// Intialise Game Variables
+	_start = false;
+	_score = 0;
+	_lives = 3;
 
 	// Draw Background
 	auto background = DrawNode::create();
@@ -98,9 +101,32 @@ bool Level::init()
     return true;
 }
 
+void Level::update(float dt)
+{
+	if (_start)
+	{
+		if (_ball && !_ball->checkBounds())
+		{
+			_lives -= 1;
+		}
+
+		if (!_lives)
+		{
+			// GameOver(false);
+		}
+		else
+		{
+			if (!_blocks.size())
+			{
+				spawnBlocks();
+			}
+		}
+	}
+}
+
 void Level::onMouseUp(cocos2d::Event* event) {
 	// If we have already performed the startup, do not execute.
-	if (start)
+	if (_start)
 	{
 		return;
 	}
@@ -117,15 +143,15 @@ void Level::onMouseUp(cocos2d::Event* event) {
 	// If player clicks left button, start the game
 	if (EventMouse::MouseButton::BUTTON_LEFT == mouseEvent->getMouseButton())
 	{
-		start = true;
+		_start = true;
 
 		auto origin = Director::getInstance()->getVisibleOrigin();
 		auto winSize = Director::getInstance()->getVisibleSize();
 
 		// Spawn Wrecking Ball
 		_ball = Ball::create();
-		_ball->setPosition(Vec2(winSize.width * 0.5f, winSize.height * 0.4f));
 		this->addChild(_ball);
+		_ball->startMovement();
 	}
 }
 
