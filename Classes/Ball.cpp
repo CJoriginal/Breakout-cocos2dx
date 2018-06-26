@@ -10,15 +10,18 @@ bool Ball::init()
 		return false;
 	}
 
+	// Setup Physics Body
 	auto body = PhysicsBody::createCircle(getContentSize().width / 2);
 	body->setDynamic(true);
 	body->setCollisionBitmask(2);
 	body->setContactTestBitmask(true);
 	setPhysicsBody(body);
 
+
 	auto origin = Director::getInstance()->getVisibleOrigin();
 	auto winSize = Director::getInstance()->getVisibleSize();
 
+	// Set Start Position and turn movement off
 	_moving = false;
 	_startPosition = Vec2(winSize.width * 0.5f, winSize.height * 0.4f);
 
@@ -29,7 +32,9 @@ bool Ball::init()
 
 void Ball::update(float dt)
 {
-	if (_moving) {
+	// If moving, update the ball position based on our magnitude and given velocity
+	if (_moving)
+	{
 		Vec2 position = getPosition();
 		Vec2 newPosition = Vec2(position.x + (_magnitude * _velocity.x * dt), position.y + (_magnitude * _velocity.y * dt));
 		setPosition(newPosition);
@@ -38,15 +43,17 @@ void Ball::update(float dt)
 
 void Ball::setup()
 {
+	// If the ball is invisible, make it visible
 	if (!isVisible())
 	{
 		setVisible(true);
 	}
 
+	// Set to initial position
 	setPosition(_startPosition);
 
+	// Initialise initial values
 	_hitTop = false;
-
 	_magnitude = 200.0f;
 
 	if (std::round(rand_0_1()))
@@ -58,15 +65,14 @@ void Ball::setup()
 		_velocity = Vec2(-1.0f, -1.0f);
 	}
 
+	// Start moving
 	_moving = true;
 }
 
 void Ball::handleCollision(const Size& size, const Vec2& position) {
-	cocos2d::log("handling collision");
-
 	// Grab Ball Parameters
 	float radius = getContentSize().width / 2;
-	const Vec2 ballPosition = getPosition();
+	Vec2 ballPosition = getPosition();
 
 	// Grab Sprite Parameters
 	float height = size.height;
@@ -80,19 +86,8 @@ void Ball::handleCollision(const Size& size, const Vec2& position) {
 	float left = x - width / 2;
 	float right = x + width / 2;
 
-	// If ball position is between the top and bottom, we are colliding on the x-axis
-	if (ballPosition.y < top && ballPosition.y > bottom)
-	{
-		float maxX = abs(right - ballPosition.x);
-		float minX = abs(left - ballPosition.x);
-
-		// If within radius, we have collided on the x-axis so flip x velocity
-		if (abs(left - ballPosition.x) <= radius || abs(right - ballPosition.x) <= radius)
-		{
-			_velocity.x *= -1.0f;
-		}
-	}
-	else
+	// If ball position is between the left and right, we are colliding on the y-axis
+	if (ballPosition.x > left && ballPosition.x < right)
 	{
 		float maxY = abs(top - ballPosition.y);
 		float minY = abs(bottom - ballPosition.y);
@@ -103,15 +98,38 @@ void Ball::handleCollision(const Size& size, const Vec2& position) {
 			_velocity.y *= -1.0f;
 		}
 	}
+	else
+	{
+		float maxX = abs(right - ballPosition.x);
+		float minX = abs(left - ballPosition.x);
+
+		// If within radius, we have collided on the x-axis so flip x velocity
+		if (minX <= radius)
+		{
+			if (_velocity.x != -1.0f)
+			{
+				_velocity.x *= -1.0f;
+			}
+		}
+		else if (maxX <= radius)
+		{
+			if (_velocity.x != 1.0f)
+			{
+				_velocity.x *= -1.0f;
+			}
+		}
+	}
 }
 
 bool Ball::checkBounds() {
 	auto origin = Director::getInstance()->getVisibleOrigin();
 	auto winSize = Director::getInstance()->getVisibleSize();
 
+	// Grab Ball Parameters
 	Vec2 position = getPosition();
 	float radius = getContentSize().width / 2;
 
+	// Calculate Screen bounds
 	float leftSide = origin.x;
 	float rightSide = origin.x + winSize.width;
 	float topSide = origin.y + winSize.height;
@@ -119,11 +137,15 @@ bool Ball::checkBounds() {
 
 	if (abs(leftSide - position.x) <= radius || abs(rightSide - position.x) <= radius)
 	{
+		// We are bouncing off the sides of the screen, invert the x velocity
 		_velocity.x *= -1.0f;
 	}
 	else if (abs(topSide - position.y) <= radius)
 	{
+		// We are bouncing off the top of the screen, invert the y velocity
 		_velocity.y *= -1.0f;
+
+		// If we are hitting the top for the first time, mark the hitTop modifier condition
 		if (!_hitTop)
 		{
 			_hitTop = true;
@@ -131,6 +153,7 @@ bool Ball::checkBounds() {
 	}
 	else if (abs(bottomSide - position.y) <= radius)
 	{
+		// We have hit the bottom of the screen, stop moving and prepare to be reset.
 		_moving = false;
 		return false;
 	}

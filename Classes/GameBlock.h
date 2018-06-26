@@ -3,16 +3,18 @@
 
 #include "cocos2d.h"
 
+// Base class of GameBlocks
 class GameBlock : public cocos2d::Sprite
 {
+protected:
+	int value;
+
+	bool setupPhysics();
 public:
 	CREATE_FUNC(GameBlock);
 	bool init() override;
 	virtual bool init(std::string filename);
-	int value;
-
-protected:
-	bool setupPhysics();
+	inline const int getValue() {return value;}
 };
 
 class RedBlock : public GameBlock

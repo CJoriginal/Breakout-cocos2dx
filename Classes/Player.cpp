@@ -13,7 +13,7 @@ bool Player::init()
 
 	// Add Physics Body
 	auto body = PhysicsBody::createBox(getContentSize());
-	body->setDynamic(true);
+	body->setDynamic(false);
 	body->setCollisionBitmask(1);
 	body->setContactTestBitmask(true);
 	setPhysicsBody(body);
@@ -37,28 +37,29 @@ void Player::update(float dt)
 	}
 }
 
-void Player::onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event)
+void Player::onKeyPressed(EventKeyboard::KeyCode keyCode, Event* event)
 {
-	log("Key with keycode %d pressed", keyCode);
 	switch (keyCode) {
 		case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
+			// Move Player Left
 			direction = 0;
 			moving = true;
 			break;
 		case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
+			// Move Player Right
 			direction = 1;
 			moving = true;
 			break;
 	}
 }
 
-void Player::onKeyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event)
+void Player::onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event)
 {
-	log("Key with keycode %d released", keyCode);
 	switch (keyCode) {
 		case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
 		case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
 		default:
+			// Player is idle, stop moving
 			moving = false;
 			break;
 	}
@@ -66,6 +67,7 @@ void Player::onKeyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Eve
 
 bool Player::move(float dt)
 {
+	// Check we are moving
 	if (!moving)
 	{
 		return false;
@@ -92,6 +94,7 @@ bool Player::move(float dt)
 
 bool Player::half()
 {
+	// Reduce player by half
 	setScale(0.5f);
 	return true;
 }

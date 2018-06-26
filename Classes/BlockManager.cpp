@@ -19,8 +19,14 @@ BlockManager::~BlockManager()
 
 }
 
-bool BlockManager::spawnBlocks()
+bool BlockManager::spawnBlocks(Scene* parent)
 {
+	// Check parent exists
+	if (!parent)
+	{
+		return false;
+	}
+
 	// Set starting position for grid iteration
 	float startingX = 125.0f;
 	float startingY = 800.0f;
@@ -33,30 +39,41 @@ bool BlockManager::spawnBlocks()
 			GameBlock* block;
 
 			if (i < 2) {
+				// Top Rows - Red Blocks
 				block = RedBlock::create();
 			}
 			else if (i >= 2 && i < 4) {
+				// Top Mid Rows - Orange Blocks
 				block = OrangeBlock::create();
 			}
 			else if (i >= 2 && i < 6) {
+				// Bottom Mid Rows - Green Blocks
 				block = GreenBlock::create();
 			}
 			else {
+				// Bottom Rows - Yellow Blocks
 				block = YellowBlock::create();
 			}
 
+			// If block failed to create, abort process and return false
 			if (!block)
 			{
 				return false;
 			}
 
+			// Set position of block
 			block->setPosition(location);
 
+			// Add to Manager
 			_blocks[i][j] = block;
 			_size++;
+
+			// Add to Parent
+			parent->addChild(block);
 		}
 	}
 
+	// Check we have created blocks, else return false
 	if (!_blocks.size())
 	{
 		return false;
@@ -67,11 +84,12 @@ bool BlockManager::spawnBlocks()
 
 void BlockManager::removeBlock(GameBlock* block)
 {
+	// Cleanup Blocks
 	block->removeFromParentAndCleanup(true);
 	_size--;
 }
 
-std::vector<std::vector<GameBlock*>> BlockManager::getBlocks() const
+const std::vector<std::vector<GameBlock*>> BlockManager::getBlocks()
 {
 	return _blocks;
 }

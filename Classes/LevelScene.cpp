@@ -31,13 +31,6 @@
 
 USING_NS_CC;
 
-enum class PhysicsCategory {
-	None = 0,
-	Player = (1 << 0),    // 1
-	Block = (1 << 1), // 2
-	All = (Player | Block) // 3
-};
-
 Scene* Level::createScene()
 {
 	// 'scene' is an autorelease object
@@ -111,6 +104,7 @@ void Level::update(float dt)
 {
 	if (_start)
 	{
+		// If ball has left the game, deduct a life
 		if (_ball && !_ball->checkBounds())
 		{
 			_lives -= 1;
@@ -123,6 +117,8 @@ void Level::update(float dt)
 			}
 		}
 
+		// Check remaining lives left. If we are out of lives, we must stop the game and display
+		// the game over screen, else reset the ball to continue
 		if (!_lives)
 		{
 			// Display Game Over Screen
@@ -132,6 +128,7 @@ void Level::update(float dt)
 		{
 			if (!_blocks->getSize())
 			{
+				// If this is the first screen, reset and prepare for the second screen
 				if (_isFirstScreen)
 				{
 					spawnBlocks();
@@ -146,7 +143,8 @@ void Level::update(float dt)
 	}
 }
 
-void Level::onMouseUp(cocos2d::Event* event) {
+void Level::onMouseUp(Event* event) 
+{
 	// If we have already performed the startup, do not execute.
 	if (_start)
 	{
@@ -158,14 +156,13 @@ void Level::onMouseUp(cocos2d::Event* event) {
 	// Check Mouse Event is valid
 	if (!mouseEvent)
 	{
-		cocos2d::log("Could not start game due to bad cast");
+		log("Could not start game due to bad cast");
 		return;
 	}
 
 	// If player clicks left button, start the game
 	if (EventMouse::MouseButton::BUTTON_LEFT == mouseEvent->getMouseButton() || EventMouse::MouseButton::BUTTON_RIGHT == mouseEvent->getMouseButton())
 	{
-
 		// Set start variables
 		_score = 0;
 		_lives = 3;
@@ -179,6 +176,7 @@ void Level::onMouseUp(cocos2d::Event* event) {
 		}
 		_ball->setup();
 
+		// Hide Labels when necessary
 		if (_startLabel->isVisible())
 		{
 			_startLabel->setVisible(false);
@@ -191,29 +189,33 @@ void Level::onMouseUp(cocos2d::Event* event) {
 	}
 }
 
-bool Level::onContactBegin(cocos2d::PhysicsContact &contact)
+bool Level::onContactBegin(PhysicsContact &contact)
 {
 	PhysicsBody *a = contact.getShapeA()->getBody();
 	PhysicsBody *b = contact.getShapeB()->getBody();
 
+	// Check if the ball has collided with an object
 	if ((1 == a->getCollisionBitmask() && 2 == b->getCollisionBitmask()) || (2 == a->getCollisionBitmask() && 1 == b->getCollisionBitmask()))
 	{
 		Ball* ball = static_cast<Ball*>(a->getOwner());
 
 		if (ball)
 		{
+			// Check if the ball collided with player, if so, handle that collision
 			Player* player = dynamic_cast<Player*>(b->getOwner());
 			if (player)
 			{
 				_ball->handleCollision(player->getContentSize(), player->getPosition());
 			}
 
+			// Check if the ball collided with a block. If so, handle collision and update the score
+			// before removing the block;
 			GameBlock* block = dynamic_cast<GameBlock*>(b->getOwner());
 			if (block)
 			{
 				_ball->handleCollision(block->getContentSize(), block->getPosition());
 				
-				_score += block->value;
+				_score += block->getValue();
 				_blockCollisions += 1;
 
 				updateLabelText(_scoreLabel, "Score: ", _score);
@@ -228,8 +230,6 @@ bool Level::onContactBegin(cocos2d::PhysicsContact &contact)
 		}
 	}
 
-	cocos2d::log("Did not collide");
-
 	return false;
 }
 
@@ -242,7 +242,6 @@ bool Level::spawnLabels(const Vec2& origin, const Size& winSize)
 		return false;
 	}
 
-	// position the label on the center of the screen
 	_titleLabel->setPosition(Vec2(origin.x + winSize.width * 0.5f,
 		origin.y + winSize.height - _titleLabel->getContentSize().height));
 
@@ -253,7 +252,6 @@ bool Level::spawnLabels(const Vec2& origin, const Size& winSize)
 		return false;
 	}
 
-	// position the label on the center of the screen
 	_scoreLabel->setPosition(Vec2(origin.x + winSize.width * 0.25f,
 		origin.y + winSize.height - _scoreLabel->getContentSize().height - 100.0f));
 
@@ -264,7 +262,6 @@ bool Level::spawnLabels(const Vec2& origin, const Size& winSize)
 		return false;
 	}
 
-	// position the label on the center of the screen
 	_livesLabel->setPosition(Vec2(origin.x + winSize.width * 0.75f,
 		origin.y + winSize.height - _livesLabel->getContentSize().height - 100.0f));
 
@@ -275,7 +272,6 @@ bool Level::spawnLabels(const Vec2& origin, const Size& winSize)
 		return false;
 	}
 
-	// position the label on the center of the screen
 	_resultLabel->setPosition(Vec2(origin.x + winSize.width * 0.5f,
 		origin.y + winSize.height / 3 - _resultLabel->getContentSize().height));
 
@@ -288,7 +284,6 @@ bool Level::spawnLabels(const Vec2& origin, const Size& winSize)
 		return false;
 	}
 
-	// position the label on the center of the screen
 	_startLabel->setPosition(Vec2(origin.x + winSize.width * 0.5f,
 		origin.y + winSize.height / 3 - (_resultLabel->getContentSize().height + _startLabel->getContentSize().height)));
 
@@ -302,18 +297,13 @@ bool Level::spawnLabels(const Vec2& origin, const Size& winSize)
 	return true;
 }
 
-bool Level::spawnBlocks() {
-	if (!_blocks->spawnBlocks())
+bool Level::spawnBlocks() 
+{
+	// Check we spawned blocks successfully
+	if (!_blocks->spawnBlocks(this))
 	{
+		log("we have failed to spawn the blocks");
 		return false;
-	}
-
-	for (const std::vector<GameBlock*> row : _blocks->getBlocks())
-	{
-		for (GameBlock* block : row)
-		{
-			this->addChild(block);
-		}
 	}
 
 	return true;
@@ -321,26 +311,32 @@ bool Level::spawnBlocks() {
 
 void Level::checkBallModifiers(GameBlock* block)
 {
+	// Check Collision Modifiers
 	if (!_redHit || !_orangeHit)
 	{
+		// If we hit an red block, mark it
 		if (dynamic_cast<RedBlock*>(block))
 		{
 			_redHit = true;
 		}
 
+		// If we hit an orange block, mark it
 		if (dynamic_cast<OrangeBlock*>(block))
 		{
 			_orangeHit = true;
 		}
 
+		// If we have hit both a red and a orange block, increase the ball's speed
 		if (_redHit && _orangeHit)
 		{
 			_ball->increaseSpeed();
 		}
 	}
 
+	// Check Block Collision Modifiers
 	if (!_firstBoost)
 	{
+		// If we have hit 4 blocks, increase speed
 		if (_blockCollisions == 4)
 		{
 			_firstBoost = _ball->increaseSpeed();
@@ -348,6 +344,7 @@ void Level::checkBallModifiers(GameBlock* block)
 	}
 
 	if (!_secondBoost) {
+		// if we have hit 12 blocks, increase speed
 		if (_blockCollisions == 12)
 		{
 			_secondBoost = _ball->increaseSpeed();
@@ -357,6 +354,8 @@ void Level::checkBallModifiers(GameBlock* block)
 
 void Level::checkPlayerModifiers()
 {
+	// Check if we have hit a red block and the top boundary.
+	// If so, half the player's size
 	if (!_halvedPlayer)
 	{
 		if (_redHit && _ball->hasTouchedTop())
@@ -368,13 +367,18 @@ void Level::checkPlayerModifiers()
 
 void Level::resetModifiers()
 {
+	// Reset Modifier Flags
 	_firstBoost = false;
 	_secondBoost = false;
 	_orangeHit = false;
 	_redHit = false;
 	_halvedPlayer = false;
 
+	// Reset Player Size
 	_player->setScale(1.0f);
+
+	// Reset Collisions
+	_blockCollisions = 0;
 }
 
 void Level::updateLabelText(Label* label, std::string text, int value)
@@ -385,6 +389,7 @@ void Level::updateLabelText(Label* label, std::string text, int value)
 
 void Level::displayResultLabels(bool didWin)
 {
+	// Choose the result text based on the player's result
 	std::string resultText;
 	if (didWin)
 	{
@@ -397,12 +402,17 @@ void Level::displayResultLabels(bool didWin)
 
 	std::string startText = "Click to play again.";
 
+	// Set text
 	_startLabel->setString(startText);
 	_resultLabel->setString(resultText);
 
+	// Set labels to visible
 	_startLabel->setVisible(true);
 	_resultLabel->setVisible(true);
 
+	// Hide Ball
 	_ball->setVisible(false);
+
+	// Stop Game Logic
 	_start = false;
 }

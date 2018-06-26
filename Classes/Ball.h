@@ -3,14 +3,13 @@
 
 #include "cocos2d.h"
 
-using namespace cocos2d;
-
-class Ball : public Sprite
+// A Sprite Class to represent and handle collision for the ball.
+class Ball : public cocos2d::Sprite
 {
 private:
-	Vec2 _startPosition;
+	cocos2d::Vec2 _startPosition;
+	cocos2d::Vec2 _velocity;
 	float _magnitude;
-	Vec2 _velocity;
 	bool _moving;
 	bool _hitTop;
 protected:
@@ -22,12 +21,13 @@ public:
 
 	void setup();
 
-	inline Vec2& getVelocity() { return _velocity; }
-	inline void setVelocity(const Vec2& newVelocity) { _velocity = newVelocity; };
+	inline cocos2d::Vec2& getVelocity() { return _velocity; }
+	inline void setVelocity(const cocos2d::Vec2& newVelocity) { _velocity = newVelocity; };
 
-	void handleCollision(const Size& size, const Vec2& position);
 	inline bool const increaseSpeed() { _magnitude *= 1.1f; return true; }
 	inline bool const hasTouchedTop() { return _hitTop; }
+
+	void handleCollision(const cocos2d::Size& size, const cocos2d::Vec2& position);
 
 	bool checkBounds();
 };

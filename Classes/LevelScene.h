@@ -55,19 +55,8 @@ private:
 	bool _secondBoost;
 	bool _orangeHit;
 	bool _redHit;
-
 	bool _halvedPlayer;
-
 	bool spawnLabels(const cocos2d::Vec2& origin, const cocos2d::Size& winSize);
-
-protected:
-	virtual bool init();
-	void onMouseUp(cocos2d::Event *event);
-	bool onContactBegin(cocos2d::PhysicsContact &contact);
-	void update(float dt) override;
-
-public:
-    static cocos2d::Scene* createScene();
 
 	// Scene Utility Functions
 	bool spawnBlocks();
@@ -79,6 +68,14 @@ public:
 	void updateLabelText(cocos2d::Label* label, std::string text, int value);
 	void displayResultLabels(bool didWin);
 
+protected:
+	virtual bool init();
+	void onMouseUp(cocos2d::Event *event);
+	bool onContactBegin(cocos2d::PhysicsContact &contact);
+	void update(float dt) override;
+
+public:
+    static cocos2d::Scene* createScene();
     CREATE_FUNC(Level);
 };
 

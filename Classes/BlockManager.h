@@ -3,24 +3,25 @@
 
 #include "cocos2d.h"
 
-using namespace cocos2d;
-
 class GameBlock;
 
+// A Manager Class dedicated to the management of GameBlocks within a Scene.
 class BlockManager
 {
-	private:
-		std::vector<std::vector<GameBlock*>> _blocks;
-		int _size;
-	public:
-		BlockManager();
-		~BlockManager();
+private:
+	std::vector<std::vector<GameBlock*>> _blocks;
+	int _size;
+public:
+	BlockManager();
+	~BlockManager();
 
-		bool spawnBlocks();
-		void removeBlock(GameBlock* block);
+	// Getter Functions
+	inline const int getSize() { return _size; }
+	const std::vector<std::vector<GameBlock*>> getBlocks();
 
-		inline int getSize() const {return _size;}
-		std::vector<std::vector<GameBlock*>> getBlocks() const;
+	// Utility Functions
+	bool spawnBlocks(cocos2d::Scene* parent);
+	void removeBlock(GameBlock* block);
 };
 
 #endif __BLOCKMANAGER_H__

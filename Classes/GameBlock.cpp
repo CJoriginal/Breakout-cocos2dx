@@ -5,6 +5,7 @@ USING_NS_CC;
 
 bool GameBlock::setupPhysics()
 {
+	// Setup Block Physics Body
 	auto body = PhysicsBody::createBox(getContentSize());
 
 	if (!body)
@@ -27,16 +28,19 @@ bool GameBlock::init()
 
 bool GameBlock::init(std::string filename)
 {
+	// If a filename wasn't passed, use the default image
 	if (filename.empty())
 	{
 		filename = "block.png";
 	}
 
+	// Check we have initiated the block
 	if (!Sprite::initWithFile(filename)) 
 	{
 		return false;
 	}
 
+	// Setup physics for the block
 	setupPhysics();
 
 	return true;
