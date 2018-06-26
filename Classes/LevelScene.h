@@ -42,6 +42,9 @@ private:
 	cocos2d::Label* _livesLabel;
 	cocos2d::Label* _titleLabel;
 
+	cocos2d::Label* _resultLabel;
+	cocos2d::Label* _startLabel;
+
 	int _score;
 	int _lives;
 	int _blockCollisions;
@@ -67,11 +70,14 @@ public:
     static cocos2d::Scene* createScene();
 
 	// Scene Utility Functions
-	virtual bool spawnBlocks();
+	bool spawnBlocks();
+
 	void checkBallModifiers(GameBlock* Block);
 	void checkPlayerModifiers();
 	void resetModifiers();
+
 	void updateLabelText(cocos2d::Label* label, std::string text, int value);
+	void displayResultLabels(bool didWin);
 
     CREATE_FUNC(Level);
 };

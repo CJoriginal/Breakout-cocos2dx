@@ -47,7 +47,7 @@ Scene* Level::createScene()
 	scene->getPhysicsWorld()->setGravity(Vec2(0.0f, 0.0f));
 
 	// Display Debug Drawing for Physic Objects
-	scene->getPhysicsWorld()->setDebugDrawMask(0xffff);
+	scene->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_NONE);
 
 	auto layer = Level::create();
 
@@ -69,14 +69,11 @@ bool Level::init()
 	// Intialise Game Variables
 	_start = false;
 	_isFirstScreen = true;
-	_score = 0;
-	_lives = 3;
 	_firstBoost = false;
 	_secondBoost = false;
 	_orangeHit = false;
 	_redHit = false;
 	_halvedPlayer = false;
-
 
 	// Draw Background
 	auto background = DrawNode::create();
@@ -119,12 +116,17 @@ void Level::update(float dt)
 			_lives -= 1;
 			updateLabelText(_livesLabel, "Lives: ", _lives);
 			resetModifiers();
+
+			if (_lives)
+			{
+				_ball->setup();
+			}
 		}
 
 		if (!_lives)
 		{
 			// Display Game Over Screen
-			// GameOver(false);
+			displayResultLabels(false);
 		}
 		else
 		{
@@ -132,13 +134,13 @@ void Level::update(float dt)
 			{
 				if (_isFirstScreen)
 				{
-					_ball->setup();
 					spawnBlocks();
-					_ball->startMovement();
+					_ball->setup();
 					_isFirstScreen = false;
 				}
 
 				// Display Victory Screen
+				displayResultLabels(true);
 			}
 		}
 	}
@@ -161,17 +163,31 @@ void Level::onMouseUp(cocos2d::Event* event) {
 	}
 
 	// If player clicks left button, start the game
-	if (EventMouse::MouseButton::BUTTON_LEFT == mouseEvent->getMouseButton())
+	if (EventMouse::MouseButton::BUTTON_LEFT == mouseEvent->getMouseButton() || EventMouse::MouseButton::BUTTON_RIGHT == mouseEvent->getMouseButton())
 	{
+
+		// Set start variables
+		_score = 0;
+		_lives = 3;
 		_start = true;
 
-		auto origin = Director::getInstance()->getVisibleOrigin();
-		auto winSize = Director::getInstance()->getVisibleSize();
+		// Spawn Wrecking Ball if not already created
+		if (!_ball)
+		{
+			_ball = Ball::create();
+			this->addChild(_ball);
+		}
+		_ball->setup();
 
-		// Spawn Wrecking Ball
-		_ball = Ball::create();
-		this->addChild(_ball);
-		_ball->startMovement();
+		if (_startLabel->isVisible())
+		{
+			_startLabel->setVisible(false);
+		}
+
+		if (_resultLabel->isVisible())
+		{
+			_resultLabel->setVisible(false);
+		}
 	}
 }
 
@@ -252,10 +268,36 @@ bool Level::spawnLabels(const Vec2& origin, const Size& winSize)
 	_livesLabel->setPosition(Vec2(origin.x + winSize.width * 0.75f,
 		origin.y + winSize.height - _livesLabel->getContentSize().height - 100.0f));
 
+	// Create Result Label
+	_resultLabel = Label::createWithTTF("", "fonts/Marker Felt.ttf", 24);
+	if (!_resultLabel)
+	{
+		return false;
+	}
+
+	// position the label on the center of the screen
+	_resultLabel->setPosition(Vec2(origin.x + winSize.width * 0.5f,
+		origin.y + winSize.height / 3 - _resultLabel->getContentSize().height));
+
+	_resultLabel->setVisible(false);
+
+	// Create Start Label
+	_startLabel = Label::createWithTTF("Click to start", "fonts/Marker Felt.ttf", 24);
+	if (!_startLabel)
+	{
+		return false;
+	}
+
+	// position the label on the center of the screen
+	_startLabel->setPosition(Vec2(origin.x + winSize.width * 0.5f,
+		origin.y + winSize.height / 3 - (_resultLabel->getContentSize().height + _startLabel->getContentSize().height)));
+
 	// Add labels as children
 	this->addChild(_titleLabel, 1);
 	this->addChild(_scoreLabel, 1);
 	this->addChild(_livesLabel, 1);
+	this->addChild(_resultLabel, 1);
+	this->addChild(_startLabel, 1);
 
 	return true;
 }
@@ -339,4 +381,28 @@ void Level::updateLabelText(Label* label, std::string text, int value)
 {
 	text += std::to_string(value);
 	label->setString(text);
+}
+
+void Level::displayResultLabels(bool didWin)
+{
+	std::string resultText;
+	if (didWin)
+	{
+		resultText = "Congratulations! You won!";
+	}
+	else
+	{
+		resultText = "Game Over";
+	}
+
+	std::string startText = "Click to play again.";
+
+	_startLabel->setString(startText);
+	_resultLabel->setString(resultText);
+
+	_startLabel->setVisible(true);
+	_resultLabel->setVisible(true);
+
+	_ball->setVisible(false);
+	_start = false;
 }

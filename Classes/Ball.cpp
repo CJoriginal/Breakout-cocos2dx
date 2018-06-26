@@ -19,9 +19,8 @@ bool Ball::init()
 	auto origin = Director::getInstance()->getVisibleOrigin();
 	auto winSize = Director::getInstance()->getVisibleSize();
 
+	_moving = false;
 	_startPosition = Vec2(winSize.width * 0.5f, winSize.height * 0.4f);
-	
-	setup();
 
 	scheduleUpdate();
 
@@ -39,9 +38,13 @@ void Ball::update(float dt)
 
 void Ball::setup()
 {
+	if (!isVisible())
+	{
+		setVisible(true);
+	}
+
 	setPosition(_startPosition);
 
-	_moving = false;
 	_hitTop = false;
 
 	_magnitude = 200.0f;
@@ -54,6 +57,8 @@ void Ball::setup()
 	{
 		_velocity = Vec2(-1.0f, -1.0f);
 	}
+
+	_moving = true;
 }
 
 void Ball::handleCollision(const Size& size, const Vec2& position) {
@@ -126,9 +131,7 @@ bool Ball::checkBounds() {
 	}
 	else if (abs(bottomSide - position.y) <= radius)
 	{
-		setup();
-		startMovement();
-
+		_moving = false;
 		return false;
 	}
 
