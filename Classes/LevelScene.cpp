@@ -27,6 +27,7 @@
 #include "Player.h"
 #include "Ball.h"
 #include "GameBlock.h"
+#include "BlockManager.h"
 
 USING_NS_CC;
 
@@ -70,6 +71,12 @@ bool Level::init()
 	_isFirstScreen = true;
 	_score = 0;
 	_lives = 3;
+	_firstBoost = false;
+	_secondBoost = false;
+	_orangeHit = false;
+	_redHit = false;
+	_halvedPlayer = false;
+
 
 	// Draw Background
 	auto background = DrawNode::create();
@@ -85,6 +92,7 @@ bool Level::init()
 	this->addChild(_player);
 
 	// Spawn Collidable Blocks
+	_blocks = new BlockManager();
 	spawnBlocks();
 
 	// Add Event Listeners
@@ -110,6 +118,7 @@ void Level::update(float dt)
 		{
 			_lives -= 1;
 			updateLabelText(_livesLabel, "Lives: ", _lives);
+			resetModifiers();
 		}
 
 		if (!_lives)
@@ -119,11 +128,13 @@ void Level::update(float dt)
 		}
 		else
 		{
-			if (!_blocks.size())
+			if (!_blocks->getSize())
 			{
 				if (_isFirstScreen)
 				{
+					_ball->setup();
 					spawnBlocks();
+					_ball->startMovement();
 					_isFirstScreen = false;
 				}
 
@@ -194,7 +205,7 @@ bool Level::onContactBegin(cocos2d::PhysicsContact &contact)
 				checkBallModifiers(block);
 				checkPlayerModifiers();
 
-				block->removeFromParentAndCleanup(true);
+				_blocks->removeBlock(block);
 			}
 
 			return true;
@@ -250,52 +261,17 @@ bool Level::spawnLabels(const Vec2& origin, const Size& winSize)
 }
 
 bool Level::spawnBlocks() {
-	// Initialise Block Container
-	_blocks = std::vector<std::vector<GameBlock*>>(8);
-
-	// Set starting position for grid iteration
-	float startingX = 125.0f;
-	float startingY = 800.0f;
-
-	// Fill Block Container with blocks
-	for (int i = 0; i < 8; i++) {
-		std::vector<GameBlock*> row(14);
-
-		for (int j = 0; j < 14; j++) {
-			Vec2 location = Vec2(startingX + (60.0f * j), startingY + (-20.0f * i));
-
-			GameBlock* block;
-
-			if (i < 2) {
-				block = RedBlock::create();
-			}
-			else if (i >= 2 && i < 4) {
-				block = OrangeBlock::create();
-			}
-			else if (i >= 2 && i < 6) {
-				block = GreenBlock::create();
-			}
-			else {
-				block = YellowBlock::create();
-			}
-
-			if (!block)
-			{
-				return false;
-			}
-
-			block->setPosition(location);
-
-			this->addChild(block);
-			row.push_back(block);
-		}
-
-		_blocks.push_back(row);
-	}
-
-	if (!_blocks.size())
+	if (!_blocks->spawnBlocks())
 	{
 		return false;
+	}
+
+	for (const std::vector<GameBlock*> row : _blocks->getBlocks())
+	{
+		for (GameBlock* block : row)
+		{
+			this->addChild(block);
+		}
 	}
 
 	return true;
@@ -346,6 +322,17 @@ void Level::checkPlayerModifiers()
 			_halvedPlayer = _player->half();
 		}
 	}
+}
+
+void Level::resetModifiers()
+{
+	_firstBoost = false;
+	_secondBoost = false;
+	_orangeHit = false;
+	_redHit = false;
+	_halvedPlayer = false;
+
+	_player->setScale(1.0f);
 }
 
 void Level::updateLabelText(Label* label, std::string text, int value)

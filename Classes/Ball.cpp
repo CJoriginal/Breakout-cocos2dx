@@ -20,6 +20,25 @@ bool Ball::init()
 	auto winSize = Director::getInstance()->getVisibleSize();
 
 	_startPosition = Vec2(winSize.width * 0.5f, winSize.height * 0.4f);
+	
+	setup();
+
+	scheduleUpdate();
+
+	return true;
+}
+
+void Ball::update(float dt)
+{
+	if (_moving) {
+		Vec2 position = getPosition();
+		Vec2 newPosition = Vec2(position.x + (_magnitude * _velocity.x * dt), position.y + (_magnitude * _velocity.y * dt));
+		setPosition(newPosition);
+	}
+}
+
+void Ball::setup()
+{
 	setPosition(_startPosition);
 
 	_moving = false;
@@ -34,19 +53,6 @@ bool Ball::init()
 	else
 	{
 		_velocity = Vec2(-1.0f, -1.0f);
-	}
-
-	scheduleUpdate();
-
-	return true;
-}
-
-void Ball::update(float dt)
-{
-	if (_moving) {
-		Vec2 position = getPosition();
-		Vec2 newPosition = Vec2(position.x + (_magnitude * _velocity.x * dt), position.y + (_magnitude * _velocity.y * dt));
-		setPosition(newPosition);
 	}
 }
 
@@ -120,16 +126,8 @@ bool Ball::checkBounds() {
 	}
 	else if (abs(bottomSide - position.y) <= radius)
 	{
-		setPosition(_startPosition);
-
-		if (std::round(rand_0_1()))
-		{
-			_velocity = Vec2(1.0f, -1.0f);
-		}
-		else
-		{
-			_velocity = Vec2(-1.0f, -1.0f);
-		}
+		setup();
+		startMovement();
 
 		return false;
 	}

@@ -19,8 +19,10 @@ public:
 	// implement the "static create()" method manually
 	CREATE_FUNC(Ball);
 	bool init() override;
-	inline void startMovement() { _moving = true;}
 
+	void setup();
+
+	inline void startMovement() { _moving = true;}
 	inline Vec2& getVelocity() { return _velocity; }
 	inline void setVelocity(const Vec2& newVelocity) { _velocity = newVelocity; };
 

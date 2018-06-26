@@ -30,12 +30,13 @@
 class Player;
 class Ball;
 class GameBlock;
+class BlockManager;
 
 class Level : public cocos2d::Scene {
 private:
 	Player* _player;
 	Ball* _ball;
-	std::vector<std::vector<GameBlock*>> _blocks;
+	BlockManager* _blocks;
 
 	cocos2d::Label* _scoreLabel;
 	cocos2d::Label* _livesLabel;
@@ -69,6 +70,7 @@ public:
 	virtual bool spawnBlocks();
 	void checkBallModifiers(GameBlock* Block);
 	void checkPlayerModifiers();
+	void resetModifiers();
 	void updateLabelText(cocos2d::Label* label, std::string text, int value);
 
     CREATE_FUNC(Level);
