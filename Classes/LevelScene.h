@@ -36,9 +36,18 @@ private:
 	Player* _player;
 	Ball* _ball;
 	std::vector<std::vector<GameBlock*>> _blocks;
-	bool _start;
+
 	int _score;
 	int _lives;
+	int _blockCollisions;
+
+	bool _start;
+	bool _firstBoost;
+	bool _secondBoost;
+	bool _orangeHit;
+	bool _redHit;
+
+	bool _halvedPlayer;
 
 protected:
 	virtual bool init();
@@ -51,8 +60,8 @@ public:
 
 	// Scene Utility Functions
 	virtual bool spawnBlocks();
-
-	void resetBall();
+	void checkBallModifiers(GameBlock* Block);
+	void checkPlayerModifiers();
 
     CREATE_FUNC(Level);
 };

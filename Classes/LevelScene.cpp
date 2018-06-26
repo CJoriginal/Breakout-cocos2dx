@@ -83,9 +83,6 @@ bool Level::init()
 	// Spawn Collidable Blocks
 	spawnBlocks();
 
-	// Check Ball Exists. 
-	// If not, deduct life and spawn next ball if lives remain
-
 	// Add Event Listeners
 	auto mouseListener = EventListenerMouse::create();
 	mouseListener->onMouseUp = CC_CALLBACK_1(Level::onMouseUp, this);
@@ -176,7 +173,13 @@ bool Level::onContactBegin(cocos2d::PhysicsContact &contact)
 			if (block)
 			{
 				_ball->handleCollision(block->getContentSize(), block->getPosition());
+				
 				_score += block->value;
+				_blockCollisions += 1;
+
+				checkBallModifiers(block);
+				checkPlayerModifiers();
+
 				block->removeFromParentAndCleanup(true);
 			}
 
@@ -239,4 +242,51 @@ bool Level::spawnBlocks() {
 	}
 
 	return true;
+}
+
+void Level::checkBallModifiers(GameBlock* block)
+{
+	if (!_redHit || !_orangeHit)
+	{
+		if (dynamic_cast<RedBlock*>(block))
+		{
+			_redHit = true;
+		}
+
+		if (dynamic_cast<OrangeBlock*>(block))
+		{
+			_orangeHit = true;
+		}
+
+		if (_redHit && _orangeHit)
+		{
+			_ball->increaseSpeed();
+		}
+	}
+
+	if (!_firstBoost)
+	{
+		if (_blockCollisions == 4)
+		{
+			_firstBoost = _ball->increaseSpeed();
+		}
+	}
+
+	if (!_secondBoost) {
+		if (_blockCollisions == 12)
+		{
+			_secondBoost = _ball->increaseSpeed();
+		}
+	}
+}
+
+void Level::checkPlayerModifiers()
+{
+	if (!_halvedPlayer)
+	{
+		if (_redHit && _ball->hasTouchedTop())
+		{
+			_halvedPlayer = _player->half();
+		}
+	}
 }

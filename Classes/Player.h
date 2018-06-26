@@ -16,6 +16,8 @@ public:
 	void onKeyPressed(EventKeyboard::KeyCode keyCode, Event* event);
 	void onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event);
 
+	bool half();
+
 protected:
 	void update(float dt) override;
 

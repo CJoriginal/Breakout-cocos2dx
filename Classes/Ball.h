@@ -12,6 +12,7 @@ private:
 	float _magnitude;
 	Vec2 _velocity;
 	bool _moving;
+	bool _hitTop;
 protected:
 	void update(float dt) override;
 public:
@@ -24,6 +25,8 @@ public:
 	inline void setVelocity(const Vec2& newVelocity) { _velocity = newVelocity; };
 
 	void handleCollision(const Size& size, const Vec2& position);
+	inline bool const increaseSpeed() { _magnitude *= 1.1f; return true; }
+	inline bool const hasTouchedTop() { return _hitTop; }
 
 	bool checkBounds();
 };

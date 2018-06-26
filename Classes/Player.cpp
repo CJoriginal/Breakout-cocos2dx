@@ -78,14 +78,20 @@ bool Player::move(float dt)
 	// Update current x co-ordinate with new movement
 	if (direction)
 	{
-		newX += 150.0f * dt;
+		newX += 450.0f * dt;
 	}
 	else
 	{
-		newX += -150.0f * dt;
+		newX += -450.0f * dt;
 	}
 
 	setPosition(newX,currentPosition.y);
 
+	return true;
+}
+
+bool Player::half()
+{
+	setScale(0.5f);
 	return true;
 }

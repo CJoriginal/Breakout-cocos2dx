@@ -22,15 +22,18 @@ bool Ball::init()
 	_startPosition = Vec2(winSize.width * 0.5f, winSize.height * 0.4f);
 	setPosition(_startPosition);
 
-	_magnitude = 100.0f;
+	_moving = false;
+	_hitTop = false;
 
-	if ((int)rand_0_1())
+	_magnitude = 200.0f;
+
+	if (std::round(rand_0_1()))
 	{
-		_velocity = Vec2(_magnitude, -_magnitude);
+		_velocity = Vec2(1.0f, -1.0f);
 	}
 	else
 	{
-		_velocity = Vec2(-_magnitude, -_magnitude);
+		_velocity = Vec2(-1.0f, -1.0f);
 	}
 
 	scheduleUpdate();
@@ -42,7 +45,7 @@ void Ball::update(float dt)
 {
 	if (_moving) {
 		Vec2 position = getPosition();
-		Vec2 newPosition = Vec2(position.x + (_velocity.x * dt), position.y + (_velocity.y * dt));
+		Vec2 newPosition = Vec2(position.x + (_magnitude * _velocity.x * dt), position.y + (_magnitude * _velocity.y * dt));
 		setPosition(newPosition);
 	}
 }
@@ -110,20 +113,26 @@ bool Ball::checkBounds() {
 	else if (abs(topSide - position.y) <= radius)
 	{
 		_velocity.y *= -1.0f;
+		if (!_hitTop)
+		{
+			_hitTop = true;
+		}
 	}
 	else if (abs(bottomSide - position.y) <= radius)
 	{
 		setPosition(_startPosition);
-		if ((int)rand_0_1())
+
+		if (std::round(rand_0_1()))
 		{
-			_velocity = Vec2(_magnitude, -_magnitude);
+			_velocity = Vec2(1.0f, -1.0f);
 		}
 		else
 		{
-			_velocity = Vec2(-_magnitude, -_magnitude);
+			_velocity = Vec2(-1.0f, -1.0f);
 		}
-		return true;
+
+		return false;
 	}
 
-	return false;
+	return true;
 }
