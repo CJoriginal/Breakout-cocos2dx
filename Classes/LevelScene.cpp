@@ -67,13 +67,17 @@ bool Level::init()
 
 	// Intialise Game Variables
 	_start = false;
+	_isFirstScreen = true;
 	_score = 0;
 	_lives = 3;
 
 	// Draw Background
 	auto background = DrawNode::create();
-	background->drawSolidRect(origin, winSize, Color4F(0.6f, 0.6f, 0.6f, 1.0f));
+	background->drawSolidRect(origin, winSize * 2, Color4F(0.6f, 0.6f, 0.6f, 1.0f));
 	this->addChild(background);
+
+	// Spawn Labels
+	spawnLabels(origin, winSize);
 
 	// Spawn player
 	_player = Player::create();
@@ -105,17 +109,25 @@ void Level::update(float dt)
 		if (_ball && !_ball->checkBounds())
 		{
 			_lives -= 1;
+			updateLabelText(_livesLabel, "Lives: ", _lives);
 		}
 
 		if (!_lives)
 		{
+			// Display Game Over Screen
 			// GameOver(false);
 		}
 		else
 		{
 			if (!_blocks.size())
 			{
-				spawnBlocks();
+				if (_isFirstScreen)
+				{
+					spawnBlocks();
+					_isFirstScreen = false;
+				}
+
+				// Display Victory Screen
 			}
 		}
 	}
@@ -177,6 +189,8 @@ bool Level::onContactBegin(cocos2d::PhysicsContact &contact)
 				_score += block->value;
 				_blockCollisions += 1;
 
+				updateLabelText(_scoreLabel, "Score: ", _score);
+
 				checkBallModifiers(block);
 				checkPlayerModifiers();
 
@@ -190,6 +204,49 @@ bool Level::onContactBegin(cocos2d::PhysicsContact &contact)
 	cocos2d::log("Did not collide");
 
 	return false;
+}
+
+bool Level::spawnLabels(const Vec2& origin, const Size& winSize)
+{
+	// Create Title Label
+	_titleLabel = Label::createWithTTF("Breakout Demo", "fonts/Marker Felt.ttf", 24);
+	if (!_titleLabel)
+	{
+		return false;
+	}
+
+	// position the label on the center of the screen
+	_titleLabel->setPosition(Vec2(origin.x + winSize.width * 0.5f,
+		origin.y + winSize.height - _titleLabel->getContentSize().height));
+
+	// Create Score Label
+	_scoreLabel = Label::createWithTTF("Score: 0", "fonts/Marker Felt.ttf", 24);
+	if (!_scoreLabel)
+	{
+		return false;
+	}
+
+	// position the label on the center of the screen
+	_scoreLabel->setPosition(Vec2(origin.x + winSize.width * 0.25f,
+		origin.y + winSize.height - _scoreLabel->getContentSize().height - 100.0f));
+
+	// Create Lives Label
+	_livesLabel = Label::createWithTTF("Lives: 3", "fonts/Marker Felt.ttf", 24);
+	if (!_livesLabel)
+	{
+		return false;
+	}
+
+	// position the label on the center of the screen
+	_livesLabel->setPosition(Vec2(origin.x + winSize.width * 0.75f,
+		origin.y + winSize.height - _livesLabel->getContentSize().height - 100.0f));
+
+	// Add labels as children
+	this->addChild(_titleLabel, 1);
+	this->addChild(_scoreLabel, 1);
+	this->addChild(_livesLabel, 1);
+
+	return true;
 }
 
 bool Level::spawnBlocks() {
@@ -289,4 +346,10 @@ void Level::checkPlayerModifiers()
 			_halvedPlayer = _player->half();
 		}
 	}
+}
+
+void Level::updateLabelText(Label* label, std::string text, int value)
+{
+	text += std::to_string(value);
+	label->setString(text);
 }

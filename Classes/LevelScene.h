@@ -37,17 +37,24 @@ private:
 	Ball* _ball;
 	std::vector<std::vector<GameBlock*>> _blocks;
 
+	cocos2d::Label* _scoreLabel;
+	cocos2d::Label* _livesLabel;
+	cocos2d::Label* _titleLabel;
+
 	int _score;
 	int _lives;
 	int _blockCollisions;
 
 	bool _start;
+	bool _isFirstScreen;
 	bool _firstBoost;
 	bool _secondBoost;
 	bool _orangeHit;
 	bool _redHit;
 
 	bool _halvedPlayer;
+
+	bool spawnLabels(const cocos2d::Vec2& origin, const cocos2d::Size& winSize);
 
 protected:
 	virtual bool init();
@@ -62,6 +69,7 @@ public:
 	virtual bool spawnBlocks();
 	void checkBallModifiers(GameBlock* Block);
 	void checkPlayerModifiers();
+	void updateLabelText(cocos2d::Label* label, std::string text, int value);
 
     CREATE_FUNC(Level);
 };
