@@ -61,6 +61,7 @@ bool Level::init()
 
 	// Intialise Game Variables
 	_start = false;
+	_reset = false;
 	_isFirstScreen = true;
 	_firstBoost = false;
 	_secondBoost = false;
@@ -72,6 +73,40 @@ bool Level::init()
 	auto background = DrawNode::create();
 	background->drawSolidRect(origin, winSize * 2, Color4F(0.6f, 0.6f, 0.6f, 1.0f));
 	this->addChild(background);
+
+	auto wallOne = Sprite::create("wall.png");
+	wallOne->setPosition(Vec2(50.0f, winSize.height - 500.0f));
+
+	auto wallOneBody = PhysicsBody::createBox(wallOne->getContentSize());
+	wallOneBody->setDynamic(false);
+	wallOneBody->setCollisionBitmask(2);
+	wallOneBody->setContactTestBitmask(true);
+
+	wallOne->setPhysicsBody(wallOneBody);
+
+	auto wallTwo = Sprite::create("wall.png");
+	wallTwo->setPosition(Vec2(winSize.width - 45.0f, winSize.height - 500.0f));
+
+	auto wallTwoBody = PhysicsBody::createBox(wallTwo->getContentSize());
+	wallTwoBody->setDynamic(false);
+	wallTwoBody->setCollisionBitmask(2);
+	wallTwoBody->setContactTestBitmask(true);
+
+	wallTwo->setPhysicsBody(wallTwoBody);
+
+	auto roof = Sprite::create("roof.png");
+	roof->setPosition(Vec2(winSize.width / 2 + 3.0f, winSize.height - 148.0f));
+
+	auto roofBody = PhysicsBody::createBox(roof->getContentSize());
+	roofBody->setDynamic(false);
+	roofBody->setCollisionBitmask(2);
+	roofBody->setContactTestBitmask(true);
+
+	roof->setPhysicsBody(roofBody);
+
+	this->addChild(wallOne);
+	this->addChild(wallTwo);
+	this->addChild(roof);
 
 	// Spawn Labels
 	spawnLabels(origin, winSize);
@@ -135,9 +170,11 @@ void Level::update(float dt)
 					_ball->setup();
 					_isFirstScreen = false;
 				}
-
-				// Display Victory Screen
-				displayResultLabels(true);
+				else
+				{
+					// Display Victory Screen
+					displayResultLabels(true);
+				}
 			}
 		}
 	}
@@ -167,6 +204,15 @@ void Level::onMouseUp(Event* event)
 		_score = 0;
 		_lives = 3;
 		_start = true;
+
+		// If this is another attempt, reset the scene before starting
+		if (_reset)
+		{
+			_blocks->spawnBlocks(this);
+			updateLabelText(_scoreLabel, "Score: ", _score);
+			updateLabelText(_livesLabel, "Lives: ", _lives);
+			_reset = false;
+		}
 
 		// Spawn Wrecking Ball if not already created
 		if (!_ball)
@@ -415,4 +461,5 @@ void Level::displayResultLabels(bool didWin)
 
 	// Stop Game Logic
 	_start = false;
+	_reset = true;
 }

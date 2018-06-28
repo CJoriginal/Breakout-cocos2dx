@@ -8,6 +8,7 @@ class GameBlock : public cocos2d::Sprite
 {
 protected:
 	int value;
+	cocos2d::Vec2 index;
 
 	bool setupPhysics();
 public:
@@ -15,6 +16,9 @@ public:
 	bool init() override;
 	virtual bool init(std::string filename);
 	inline const int getValue() {return value;}
+
+	inline void setIndex(const cocos2d::Vec2& newIndex) { index = newIndex; }
+	inline const cocos2d::Vec2 getIndex() { return index; }
 };
 
 class RedBlock : public GameBlock

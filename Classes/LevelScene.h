@@ -50,6 +50,7 @@ private:
 	int _blockCollisions;
 
 	bool _start;
+	bool _reset;
 	bool _isFirstScreen;
 	bool _firstBoost;
 	bool _secondBoost;

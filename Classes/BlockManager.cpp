@@ -10,7 +10,7 @@ BlockManager::BlockManager()
 	for (int i = 0; i < 8; i++) {
 		_blocks[i] = std::vector<GameBlock*>(14);
 	}
-	
+
 	_size = 0;
 }
 
@@ -34,9 +34,14 @@ bool BlockManager::spawnBlocks(Scene* parent)
 	// Fill Block Container with blocks
 	for (int i = 0; i < 8; i++) {
 		for (int j = 0; j < 14; j++) {
-			Vec2 location = Vec2(startingX + (60.0f * j), startingY + (-20.0f * i));
+			GameBlock* block = _blocks[i][j];
 
-			GameBlock* block;
+			if (block)
+			{
+				continue;
+			}
+
+			Vec2 location = Vec2(startingX + (60.0f * j), startingY + (-20.0f * i));
 
 			if (i < 2) {
 				// Top Rows - Red Blocks
@@ -65,6 +70,7 @@ bool BlockManager::spawnBlocks(Scene* parent)
 			block->setPosition(location);
 
 			// Add to Manager
+			block->setIndex(Vec2(i, j));
 			_blocks[i][j] = block;
 			_size++;
 
@@ -84,8 +90,11 @@ bool BlockManager::spawnBlocks(Scene* parent)
 
 void BlockManager::removeBlock(GameBlock* block)
 {
+	Vec2 index = block->getIndex();
+
 	// Cleanup Blocks
 	block->removeFromParentAndCleanup(true);
+	_blocks[index.x][index.y] = nullptr;
 	_size--;
 }
 

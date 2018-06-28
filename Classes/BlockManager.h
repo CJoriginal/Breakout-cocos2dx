@@ -22,6 +22,7 @@ public:
 	// Utility Functions
 	bool spawnBlocks(cocos2d::Scene* parent);
 	void removeBlock(GameBlock* block);
+	void reset(cocos2d::Scene* scene);
 };
 
 #endif __BLOCKMANAGER_H__
