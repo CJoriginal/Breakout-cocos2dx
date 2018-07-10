@@ -11,6 +11,8 @@ bool Player::init()
 		return false;
 	}
 
+	speed = 600.0f;
+
 	// Add Physics Body
 	auto body = PhysicsBody::createBox(getContentSize());
 	body->setDynamic(false);
@@ -80,11 +82,11 @@ bool Player::move(float dt)
 	// Update current x co-ordinate with new movement
 	if (direction)
 	{
-		newX += 450.0f * dt;
+		newX += speed * dt;
 	}
 	else
 	{
-		newX += -450.0f * dt;
+		newX += -speed * dt;
 	}
 
 	setPosition(newX,currentPosition.y);

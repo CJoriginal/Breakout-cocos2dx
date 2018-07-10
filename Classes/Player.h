@@ -13,6 +13,7 @@ private:
 
 	// 0 - Left, 1 - Right
 	int direction;
+	float speed;
 protected:
 	void update(float dt) override;
 	void onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event);

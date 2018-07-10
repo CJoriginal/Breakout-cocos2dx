@@ -24,7 +24,7 @@ public:
 	inline cocos2d::Vec2& getVelocity() { return _velocity; }
 	inline void setVelocity(const cocos2d::Vec2& newVelocity) { _velocity = newVelocity; };
 
-	inline bool const increaseSpeed() { _magnitude *= 1.1f; return true; }
+	inline bool const increaseSpeed() { _magnitude *= 1.33f; return true; }
 	inline bool const hasTouchedTop() { return _hitTop; }
 
 	void handleCollision(const cocos2d::Size& size, const cocos2d::Vec2& position);
