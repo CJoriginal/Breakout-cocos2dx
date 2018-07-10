@@ -31,12 +31,14 @@ class Player;
 class Ball;
 class GameBlock;
 class BlockManager;
+class SoundManager;
 
 class Level : public cocos2d::Scene {
 private:
 	Player* _player;
 	Ball* _ball;
 	BlockManager* _blocks;
+	SoundManager* _sound;
 
 	cocos2d::Label* _scoreLabel;
 	cocos2d::Label* _livesLabel;

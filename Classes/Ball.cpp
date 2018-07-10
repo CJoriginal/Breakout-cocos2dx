@@ -1,5 +1,5 @@
 #include "Ball.h"
-#include "SimpleAudioEngine.h"
+#include "SoundManager.h"
 
 USING_NS_CC;
 
@@ -121,7 +121,7 @@ void Ball::handleCollision(const Size& size, const Vec2& position) {
 	}
 }
 
-bool Ball::checkBounds() {
+bool Ball::checkBounds(SoundManager* sound) {
 	auto origin = Director::getInstance()->getVisibleOrigin();
 	auto winSize = Director::getInstance()->getVisibleSize();
 
@@ -139,6 +139,8 @@ bool Ball::checkBounds() {
 	{
 		// We are bouncing off the sides of the screen, invert the x velocity
 		_velocity.x *= -1.0f;
+
+		sound->PlayCollisionSound();
 	}
 	else if (abs(topSide - position.y) <= radius)
 	{
@@ -150,6 +152,8 @@ bool Ball::checkBounds() {
 		{
 			_hitTop = true;
 		}
+
+		sound->PlayCollisionSound();
 	}
 	else if (abs(bottomSide - position.y) <= radius)
 	{

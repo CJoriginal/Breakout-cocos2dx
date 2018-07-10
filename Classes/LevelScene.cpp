@@ -23,11 +23,11 @@
  ****************************************************************************/
 
 #include "LevelScene.h"
-#include "SimpleAudioEngine.h"
 #include "Player.h"
 #include "Ball.h"
 #include "GameBlock.h"
 #include "BlockManager.h"
+#include "SoundManager.h"
 
 USING_NS_CC;
 
@@ -120,6 +120,9 @@ bool Level::init()
 	_blocks = new BlockManager();
 	spawnBlocks();
 
+	// Spawn Sound Manager
+	_sound = new SoundManager();
+
 	// Add Event Listeners
 	auto mouseListener = EventListenerMouse::create();
 	mouseListener->onMouseUp = CC_CALLBACK_1(Level::onMouseUp, this);
@@ -140,14 +143,15 @@ void Level::update(float dt)
 	if (_start)
 	{
 		// If ball has left the game, deduct a life
-		if (_ball && !_ball->checkBounds())
+		if (_ball && !_ball->checkBounds(_sound))
 		{
 			_lives -= 1;
 			updateLabelText(_livesLabel, "Lives: ", _lives);
 			resetModifiers();
-
+			
 			if (_lives)
 			{
+				_sound->PlayDeathSound();
 				_ball->setup();
 			}
 		}
@@ -252,6 +256,9 @@ bool Level::onContactBegin(PhysicsContact &contact)
 			if (player)
 			{
 				_ball->handleCollision(player->getContentSize(), player->getPosition());
+
+				// Play Player Sound
+				_sound->PlayPlayerSound();
 			}
 
 			// Check if the ball collided with a block. If so, handle collision and update the score
@@ -270,6 +277,9 @@ bool Level::onContactBegin(PhysicsContact &contact)
 				checkPlayerModifiers();
 
 				_blocks->removeBlock(block);
+
+				// Play Sound Effect
+				_sound->PlayCollisionSound();
 			}
 
 			return true;
@@ -440,10 +450,12 @@ void Level::displayResultLabels(bool didWin)
 	if (didWin)
 	{
 		resultText = "Congratulations! You won!";
+		_sound->PlayWinSound();
 	}
 	else
 	{
 		resultText = "Game Over";
+		_sound->PlayFailureSound();
 	}
 
 	std::string startText = "Click to play again.";

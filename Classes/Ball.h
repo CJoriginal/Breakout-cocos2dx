@@ -3,6 +3,8 @@
 
 #include "cocos2d.h"
 
+class SoundManager;
+
 // A Sprite Class to represent and handle collision for the ball.
 class Ball : public cocos2d::Sprite
 {
@@ -29,7 +31,7 @@ public:
 
 	void handleCollision(const cocos2d::Size& size, const cocos2d::Vec2& position);
 
-	bool checkBounds();
+	bool checkBounds(SoundManager* sound);
 };
 
 #endif // __BALL_H__
