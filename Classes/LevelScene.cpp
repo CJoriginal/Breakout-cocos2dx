@@ -74,7 +74,7 @@ bool Level::init()
 	background->drawSolidRect(origin, winSize * 2, Color4F(0.6f, 0.6f, 0.6f, 1.0f));
 	this->addChild(background);
 
-	auto wallOne = Sprite::create("wall.png");
+	/*auto wallOne = Sprite::create("wall.png");
 	wallOne->setPosition(Vec2(50.0f, winSize.height - 500.0f));
 
 	auto wallOneBody = PhysicsBody::createBox(wallOne->getContentSize());
@@ -106,7 +106,7 @@ bool Level::init()
 
 	this->addChild(wallOne);
 	this->addChild(wallTwo);
-	this->addChild(roof);
+	this->addChild(roof);*/
 
 	// Spawn Labels
 	spawnLabels(origin, winSize);

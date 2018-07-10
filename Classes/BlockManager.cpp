@@ -28,7 +28,7 @@ bool BlockManager::spawnBlocks(Scene* parent)
 	}
 
 	// Set starting position for grid iteration
-	float startingX = 125.0f;
+	float startingX = 40.0f;
 	float startingY = 800.0f;
 
 	// Fill Block Container with blocks
