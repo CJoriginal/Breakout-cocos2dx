@@ -23,6 +23,8 @@ public:
 	CREATE_FUNC(Player);
 	bool init() override;
 	bool half();
+
+	bool checkBounds(float newX);
 };
 
 #endif // __PLAYER_H__
