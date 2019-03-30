@@ -18,6 +18,7 @@ bool Player::init()
 	body->setDynamic(false);
 	body->setCollisionBitmask(1);
 	body->setContactTestBitmask(true);
+	body->setTag(0);
 	setPhysicsBody(body);
 
 	// Setup Player Movement

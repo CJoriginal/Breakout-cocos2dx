@@ -15,8 +15,8 @@ bool Ball::init()
 	body->setDynamic(true);
 	body->setCollisionBitmask(2);
 	body->setContactTestBitmask(true);
+	body->setTag(1);
 	setPhysicsBody(body);
-
 
 	auto origin = Director::getInstance()->getVisibleOrigin();
 	auto winSize = Director::getInstance()->getVisibleSize();
@@ -69,56 +69,9 @@ void Ball::setup()
 	_moving = true;
 }
 
-void Ball::handleCollision(const Size& size, const Vec2& position) {
-	// Grab Ball Parameters
-	float radius = getContentSize().width / 2;
-	Vec2 ballPosition = getPosition();
-
-	// Grab Sprite Parameters
-	float height = size.height;
-	float width = size.width;
-	float x = position.x;
-	float y = position.y;
-
-	// Grab Box Dimensions
-	float top = y + height / 2;
-	float bottom = y - height / 2;
-	float left = x - width / 2;
-	float right = x + width / 2;
-
-	// If ball position is between the left and right, we are colliding on the y-axis
-	if (ballPosition.x > left && ballPosition.x < right)
-	{
-		float maxY = abs(top - ballPosition.y);
-		float minY = abs(bottom - ballPosition.y);
-
-		// If within radius, we have collided on the y-axis so flip y velocity
-		if (maxY <= radius || minY <= radius)
-		{
-			_velocity.y *= -1.0f;
-		}
-	}
-	else
-	{
-		float maxX = abs(right - ballPosition.x);
-		float minX = abs(left - ballPosition.x);
-
-		// If within radius, we have collided on the x-axis so flip x velocity
-		if (minX <= radius)
-		{
-			if (_velocity.x != -1.0f)
-			{
-				_velocity.x *= -1.0f;
-			}
-		}
-		else if (maxX <= radius)
-		{
-			if (_velocity.x != 1.0f)
-			{
-				_velocity.x *= -1.0f;
-			}
-		}
-	}
+void Ball::handleCollision() {
+	_velocity.x *= -1.0f;
+	_velocity.y *= -1.0f;
 }
 
 bool Ball::checkBounds(SoundManager* sound) {

@@ -247,15 +247,12 @@ bool Level::onContactBegin(PhysicsContact &contact)
 	// Check if the ball has collided with an object
 	if ((1 == a->getCollisionBitmask() && 2 == b->getCollisionBitmask()) || (2 == a->getCollisionBitmask() && 1 == b->getCollisionBitmask()))
 	{
-		Ball* ball = static_cast<Ball*>(a->getOwner());
-
-		if (ball)
+		if (a->getTag() == 1)
 		{
 			// Check if the ball collided with player, if so, handle that collision
-			Player* player = dynamic_cast<Player*>(b->getOwner());
-			if (player)
+			if (b->getTag() == 0)
 			{
-				_ball->handleCollision(player->getContentSize(), player->getPosition());
+				_ball->handleCollision();
 
 				// Play Player Sound
 				_sound->PlayPlayerSound();
@@ -263,20 +260,33 @@ bool Level::onContactBegin(PhysicsContact &contact)
 
 			// Check if the ball collided with a block. If so, handle collision and update the score
 			// before removing the block;
-			GameBlock* block = dynamic_cast<GameBlock*>(b->getOwner());
-			if (block)
+			if (b->getTag() >= 2)
 			{
-				_ball->handleCollision(block->getContentSize(), block->getPosition());
+				_ball->handleCollision();
 				
-				_score += block->getValue();
+				switch (b->getTag()) {
+					case 2:
+						_score += 7;
+						break;
+					case 3:
+						_score += 5;
+						break;
+					case 4:
+						_score += 3;
+						break;
+					case 5:
+						_score += 1;
+						break;
+				}
+
 				_blockCollisions += 1;
 
 				updateLabelText(_scoreLabel, "Score: ", _score);
 
-				checkBallModifiers(block);
+				checkBallModifiers(b->getTag());
 				checkPlayerModifiers();
 
-				_blocks->removeBlock(block);
+				b->getOwner()->removeFromParentAndCleanup(true);
 
 				// Play Sound Effect
 				_sound->PlayCollisionSound();
@@ -365,19 +375,19 @@ bool Level::spawnBlocks()
 	return true;
 }
 
-void Level::checkBallModifiers(GameBlock* block)
+void Level::checkBallModifiers(int tag)
 {
 	// Check Collision Modifiers
 	if (!_redHit || !_orangeHit)
 	{
 		// If we hit an red block, mark it
-		if (dynamic_cast<RedBlock*>(block))
+		if (tag == 2)
 		{
 			_redHit = true;
 		}
 
 		// If we hit an orange block, mark it
-		if (dynamic_cast<OrangeBlock*>(block))
+		if (tag == 3)
 		{
 			_orangeHit = true;
 		}

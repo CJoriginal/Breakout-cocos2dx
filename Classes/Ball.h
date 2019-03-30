@@ -29,7 +29,7 @@ public:
 	inline bool const increaseSpeed() { _magnitude *= 1.33f; return true; }
 	inline bool const hasTouchedTop() { return _hitTop; }
 
-	void handleCollision(const cocos2d::Size& size, const cocos2d::Vec2& position);
+	void handleCollision();
 
 	bool checkBounds(SoundManager* sound);
 };

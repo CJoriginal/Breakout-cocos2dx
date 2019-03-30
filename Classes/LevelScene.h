@@ -64,7 +64,7 @@ private:
 	// Scene Utility Functions
 	bool spawnBlocks();
 
-	void checkBallModifiers(GameBlock* Block);
+	void checkBallModifiers(int tag);
 	void checkPlayerModifiers();
 	void resetModifiers();
 

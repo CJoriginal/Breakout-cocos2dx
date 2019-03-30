@@ -54,6 +54,7 @@ bool RedBlock::init()
 	}
 
 	value = 7;
+	getPhysicsBody()->setTag(2);
 
 	return true;
 }
@@ -66,6 +67,7 @@ bool OrangeBlock::init()
 	}
 
 	value = 5;
+	getPhysicsBody()->setTag(3);
 
 	return true;
 }
@@ -78,6 +80,7 @@ bool GreenBlock::init()
 	}
 
 	value = 3;
+	getPhysicsBody()->setTag(4);
 
 	return true;
 }
@@ -90,6 +93,7 @@ bool YellowBlock::init()
 	}
 
 	value = 1;
+	getPhysicsBody()->setTag(5);
 
 	return true;
 }
