@@ -10,19 +10,16 @@ class BlockManager
 {
 private:
 	std::vector<std::vector<GameBlock*>> _blocks;
-	int _size;
 public:
 	BlockManager();
 	~BlockManager();
 
 	// Getter Functions
-	inline const int getSize() { return _size; }
+	inline const int getSize() { int size = 0; for (const std::vector<GameBlock*> vector : _blocks) { size += vector.size(); }  return size; }
 	const std::vector<std::vector<GameBlock*>> getBlocks();
 
 	// Utility Functions
 	bool spawnBlocks(cocos2d::Scene* parent);
-	void removeBlock(GameBlock* block);
-	void reset(cocos2d::Scene* scene);
 };
 
 #endif __BLOCKMANAGER_H__

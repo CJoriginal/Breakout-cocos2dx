@@ -10,8 +10,6 @@ BlockManager::BlockManager()
 	for (int i = 0; i < 8; i++) {
 		_blocks[i] = std::vector<GameBlock*>(14);
 	}
-
-	_size = 0;
 }
 
 BlockManager::~BlockManager()
@@ -72,7 +70,6 @@ bool BlockManager::spawnBlocks(Scene* parent)
 			// Add to Manager
 			block->setIndex(Vec2(i, j));
 			_blocks[i][j] = block;
-			_size++;
 
 			// Add to Parent
 			parent->addChild(block);
@@ -86,16 +83,6 @@ bool BlockManager::spawnBlocks(Scene* parent)
 	}
 
 	return true;
-}
-
-void BlockManager::removeBlock(GameBlock* block)
-{
-	Vec2 index = block->getIndex();
-
-	// Cleanup Blocks
-	block->removeFromParentAndCleanup(true);
-	_blocks[index.x][index.y] = nullptr;
-	_size--;
 }
 
 const std::vector<std::vector<GameBlock*>> BlockManager::getBlocks()
