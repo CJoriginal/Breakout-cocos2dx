@@ -9,9 +9,17 @@ class SoundManager;
 class Ball : public cocos2d::Sprite
 {
 private:
+	cocos2d::Vec2 _currentPosition;
 	cocos2d::Vec2 _startPosition;
 	cocos2d::Vec2 _velocity;
 	float _magnitude;
+	float _radius;
+
+	float _leftSide;
+	float _rightSide;
+	float _topSide;
+	float _bottomSide;
+
 	bool _moving;
 	bool _hitTop;
 protected:

@@ -68,6 +68,7 @@ bool Level::init()
 	_orangeHit = false;
 	_redHit = false;
 	_halvedPlayer = false;
+	_blockHit = false;
 
 	// Draw Background
 	auto background = DrawNode::create();
@@ -256,11 +257,13 @@ bool Level::onContactBegin(PhysicsContact &contact)
 
 				// Play Player Sound
 				_sound->PlayPlayerSound();
+
+				_blockHit = false;
 			}
 
 			// Check if the ball collided with a block. If so, handle collision and update the score
 			// before removing the block;
-			if (b->getTag() >= 2)
+			if (b->getTag() >= 2 && !_blockHit)
 			{
 				_ball->handleCollision();
 				
@@ -290,6 +293,8 @@ bool Level::onContactBegin(PhysicsContact &contact)
 
 				// Play Sound Effect
 				_sound->PlayCollisionSound();
+
+				_blockHit = true;
 			}
 
 			return true;

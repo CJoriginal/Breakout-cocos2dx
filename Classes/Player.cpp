@@ -27,6 +27,13 @@ bool Player::init()
 	kbListener->onKeyReleased = CC_CALLBACK_2(Player::onKeyReleased, this);
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(kbListener, this);
 
+	auto origin = Director::getInstance()->getVisibleOrigin();
+	auto winSize = Director::getInstance()->getVisibleSize();
+
+	// Grab Player Parameters
+	_leftSide = origin.x;
+	_rightSide = origin.x + winSize.width;
+
 	scheduleUpdate();
 
 	return true;
@@ -90,14 +97,9 @@ bool Player::move(float dt)
 		newX += -speed * dt;
 	}
 
-	if (checkBounds(newX))
-	{
-		setPosition(newX, currentPosition.y);
-	}
-	else
-	{
-		setPosition(currentPosition.x, currentPosition.y);
-	}
+	newX = clampf(newX, _leftSide, _rightSide);
+
+	setPosition(newX, currentPosition.y);
 
 	return true;
 }
@@ -106,28 +108,5 @@ bool Player::half()
 {
 	// Reduce player by half
 	setScale(0.5f);
-	return true;
-}
-
-bool Player::checkBounds(float newX) {
-	auto origin = Director::getInstance()->getVisibleOrigin();
-	auto winSize = Director::getInstance()->getVisibleSize();
-
-	// Grab Player Parameters
-	Vec2 position = getPosition();
-	float length = getContentSize().width / 2;
-
-	// Calculate Screen bounds
-	float leftSide = origin.x;
-	float rightSide = origin.x + winSize.width;
-	float topSide = origin.y + winSize.height;
-	float bottomSide = origin.y;
-
-	if (abs(leftSide - newX) <= length || abs(rightSide - newX) <= length)
-	{
-		// We are bouncing off the sides of the screen, invert the x velocity
-		return false;
-	}
-
 	return true;
 }

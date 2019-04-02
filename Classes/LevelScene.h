@@ -59,6 +59,7 @@ private:
 	bool _orangeHit;
 	bool _redHit;
 	bool _halvedPlayer;
+	bool _blockHit;
 	bool spawnLabels(const cocos2d::Vec2& origin, const cocos2d::Size& winSize);
 
 	// Scene Utility Functions

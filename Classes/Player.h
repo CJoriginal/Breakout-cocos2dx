@@ -11,6 +11,9 @@ private:
 	bool move(float dt);
 	bool moving;
 
+	float _leftSide;
+	float _rightSide;
+
 	// 0 - Left, 1 - Right
 	int direction;
 	float speed;
@@ -23,8 +26,6 @@ public:
 	CREATE_FUNC(Player);
 	bool init() override;
 	bool half();
-
-	bool checkBounds(float newX);
 };
 
 #endif // __PLAYER_H__
