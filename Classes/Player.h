@@ -26,6 +26,8 @@ public:
 	CREATE_FUNC(Player);
 	bool init() override;
 	bool half();
+
+	void handleBallCollision(cocos2d::Vec2 contactPoint);
 };
 
 #endif // __PLAYER_H__

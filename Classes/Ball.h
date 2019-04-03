@@ -37,7 +37,8 @@ public:
 	inline bool const increaseSpeed() { _magnitude *= 1.33f; return true; }
 	inline bool const hasTouchedTop() { return _hitTop; }
 
-	void handleCollision();
+	void handlePlayerCollision(const cocos2d::Sprite* player);
+	void handleBlockCollision();
 
 	bool checkBounds(SoundManager* sound);
 };

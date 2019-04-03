@@ -253,7 +253,7 @@ bool Level::onContactBegin(PhysicsContact &contact)
 			// Check if the ball collided with player, if so, handle that collision
 			if (b->getTag() == 0)
 			{
-				_ball->handleCollision();
+				_ball->handlePlayerCollision(_player);
 
 				// Play Player Sound
 				_sound->PlayPlayerSound();
@@ -265,7 +265,7 @@ bool Level::onContactBegin(PhysicsContact &contact)
 			// before removing the block;
 			if (b->getTag() >= 2 && !_blockHit)
 			{
-				_ball->handleCollision();
+				_ball->handleBlockCollision();
 				
 				switch (b->getTag()) {
 					case 2:

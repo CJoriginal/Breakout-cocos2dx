@@ -45,6 +45,11 @@ void Ball::update(float dt)
 	if (_moving)
 	{
 		_currentPosition = Vec2(clampf(_currentPosition.x + (_magnitude * _velocity.x * dt), _leftSide, _rightSide), clampf(_currentPosition.y + (_magnitude * _velocity.y * dt), _bottomSide, _topSide));
+		if (_magnitude != 200.0f)
+		{
+			_magnitude = 200.0f;
+		}
+
 		setPosition(_currentPosition);
 	}
 }
@@ -79,14 +84,60 @@ void Ball::setup()
 	_moving = true;
 }
 
-void Ball::handleCollision() {
+void Ball::handlePlayerCollision(const cocos2d::Sprite* player) 
+{
+	const cocos2d::Size halfWidth = player->getBoundingBox().size;
+	const cocos2d::Vec2 playerPos = player->convertToWorldSpace(player->getPosition());
+
+	const float playerLeft = playerPos.x + halfWidth.width / 3;
+	const float playerRight = playerPos.x + (halfWidth.width / 3) * 2;
+	
+	const cocos2d::Size ballSize = getBoundingBox().size;
+	const cocos2d::Vec2 ballPos = convertToWorldSpace(getPosition());
+
+	const float ballCenter = ballPos.x + ballSize.width / 2;
+
+	if (ballCenter > playerLeft && ballCenter < playerRight)
+	{
+		_velocity.x *= 1.0f;
+	} 
+	else if (ballCenter < playerLeft || ballCenter > playerRight)
+	{
+		log("outer %f %f %f", _velocity.x, ballCenter, playerLeft);
+		if (ballCenter < playerLeft)
+		{
+			if (_velocity.x < 0.0f)
+			{
+				_velocity.x *= 1.0f;
+			}
+			else
+			{
+				_velocity.x *= -1.0f;
+			}
+		}
+		else
+		{
+			if (_velocity.x < 0.0f)
+			{
+				_velocity.x *= -1.0f;
+			}
+			else
+			{
+				_velocity.x *= 1.0f;
+			}
+		}
+	}
+
+	_velocity.y *= -1.0f;
+}
+
+void Ball::handleBlockCollision()
+{
 	_velocity.x *= -1.0f;
 	_velocity.y *= -1.0f;
 }
 
 bool Ball::checkBounds(SoundManager* sound) {
-	log("position.x: %f leftside: %f rightside: %f", _currentPosition.x, _topSide, _bottomSide);
-
 	if (_currentPosition.x >= _rightSide || _currentPosition.x <= _leftSide)
 	{
 		// We are bouncing off the sides of the screen, invert the x velocity
