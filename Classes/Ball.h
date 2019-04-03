@@ -12,6 +12,7 @@ private:
 	cocos2d::Vec2 _currentPosition;
 	cocos2d::Vec2 _startPosition;
 	cocos2d::Vec2 _velocity;
+
 	float _magnitude;
 	float _radius;
 
@@ -26,6 +27,8 @@ private:
 
 	SoundManager* _sound;
 
+	void const clampVelocityX(float adjust);
+
 protected:
 	void update(float dt) override;
 public:
@@ -36,7 +39,6 @@ public:
 	void setup(SoundManager* sound = nullptr);
 
 	inline cocos2d::Vec2& getVelocity() { return _velocity; }
-	inline void setVelocity(const cocos2d::Vec2& newVelocity) { _velocity = newVelocity; };
 
 	inline bool const increaseSpeed() { _magnitude *= 1.33f; return true; }
 	inline bool const hasTouchedTop() { return _hitTop; }

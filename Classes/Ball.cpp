@@ -47,10 +47,6 @@ void Ball::update(float dt)
 		checkBounds();
 
 		_currentPosition = Vec2(clampf(_currentPosition.x + (_magnitude * _velocity.x * dt), _leftSide, _rightSide), clampf(_currentPosition.y + (_magnitude * _velocity.y * dt), _bottomSide, _topSide));
-		if (_magnitude != 200.0f)
-		{
-			_magnitude = 200.0f;
-		}
 
 		setPosition(_currentPosition);
 	}
@@ -92,6 +88,11 @@ void Ball::setup(SoundManager* sound)
 	_moving = true;
 }
 
+void const Ball::clampVelocityX(float adjust)
+{
+	_velocity.x = clampf(_velocity.x * adjust, -1.0f, 1.0f);
+}
+
 void Ball::handlePlayerCollision(const cocos2d::Sprite* player)
 {
 	const cocos2d::Size halfWidth = player->getBoundingBox().size;
@@ -107,7 +108,7 @@ void Ball::handlePlayerCollision(const cocos2d::Sprite* player)
 
 	if (ballCenter > playerLeft && ballCenter < playerRight)
 	{
-		_velocity.x *= 1.0f;
+		clampVelocityX(1.0f);
 	}
 	else if (ballCenter < playerLeft || ballCenter > playerRight)
 	{
@@ -115,22 +116,22 @@ void Ball::handlePlayerCollision(const cocos2d::Sprite* player)
 		{
 			if (_velocity.x < 0.0f)
 			{
-				_velocity.x *= 1.0f;
+				clampVelocityX(2.0f);
 			}
 			else
 			{
-				_velocity.x *= -1.0f;
+				clampVelocityX(-0.5f);
 			}
 		}
 		else
 		{
 			if (_velocity.x < 0.0f)
 			{
-				_velocity.x *= -1.0f;
+				clampVelocityX(-2.0f);
 			}
 			else
 			{
-				_velocity.x *= 1.0f;
+				clampVelocityX(0.5f);
 			}
 		}
 	}
@@ -140,7 +141,7 @@ void Ball::handlePlayerCollision(const cocos2d::Sprite* player)
 
 void Ball::handleBlockCollision()
 {
-	_velocity.x *= -1.0f;
+	clampVelocityX(-1.0f);
 	_velocity.y *= -1.0f;
 }
 
@@ -148,7 +149,7 @@ bool Ball::checkBounds() {
 	if (_currentPosition.x >= _rightSide || _currentPosition.x <= _leftSide)
 	{
 		// We are bouncing off the sides of the screen, invert the x velocity
-		_velocity.x *= -1.0f;
+		clampVelocityX(-1.0f);
 
 		_sound->PlayCollisionSound();
 	}
