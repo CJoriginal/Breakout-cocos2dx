@@ -182,6 +182,8 @@ void Level::update(float dt)
 				}
 			}
 		}
+
+		_sound->PlayEffects(dt);
 	}
 }
 

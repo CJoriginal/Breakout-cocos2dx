@@ -12,6 +12,8 @@ private:
 	std::string failureSound;
 	std::string winSound;
 
+	std::vector<std::string> soundsToPlay;
+
 	bool PreloadSound();
 
 public:
@@ -23,6 +25,8 @@ public:
 	bool PlayDeathSound();
 	bool PlayFailureSound();
 	bool PlayWinSound();
+
+	void PlayEffects(float dt);
 };
 
 #endif

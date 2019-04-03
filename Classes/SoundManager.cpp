@@ -27,7 +27,7 @@ SoundManager::~SoundManager()
 bool SoundManager::PreloadSound()
 {
 	// Preload Sound Effects
-	auto audio = CocosDenshion::SimpleAudioEngine::getInstance();
+	CocosDenshion::SimpleAudioEngine* audio = CocosDenshion::SimpleAudioEngine::getInstance();
 	audio->preloadEffect(playerSound.c_str());
 	audio->preloadEffect(collisionSound.c_str());
 	audio->preloadEffect(deathSound.c_str());
@@ -39,40 +39,46 @@ bool SoundManager::PreloadSound()
 
 bool SoundManager::PlayPlayerSound()
 {
-	auto audio = CocosDenshion::SimpleAudioEngine::getInstance();
-	audio->playEffect(playerSound.c_str());
-
+	soundsToPlay.push_back(playerSound.c_str());
 	return true;
 }
 
 bool SoundManager::PlayCollisionSound()
 {
-	auto audio = CocosDenshion::SimpleAudioEngine::getInstance();
-	audio->playEffect(collisionSound.c_str());
-
+	soundsToPlay.push_back(collisionSound.c_str());
 	return true;
 }
 
 bool SoundManager::PlayDeathSound()
 {
-	auto audio = CocosDenshion::SimpleAudioEngine::getInstance();
-	audio->playEffect(deathSound.c_str());
-
+	soundsToPlay.push_back(deathSound.c_str());
 	return true;
 }
 
 bool SoundManager::PlayFailureSound()
 {
-	auto audio = CocosDenshion::SimpleAudioEngine::getInstance();
-	audio->playEffect(failureSound.c_str());
-
+	soundsToPlay.push_back(failureSound.c_str());
 	return true;
 }
 
 bool SoundManager::PlayWinSound()
 {
-	auto audio = CocosDenshion::SimpleAudioEngine::getInstance();
-	audio->playEffect(winSound.c_str());
-
+	soundsToPlay.push_back(winSound.c_str());
 	return true;
+}
+
+void SoundManager::PlayEffects(float dt)
+{
+	if (!soundsToPlay.size())
+	{
+		return;
+	}
+
+
+	CocosDenshion::SimpleAudioEngine* audio = CocosDenshion::SimpleAudioEngine::getInstance();
+	while (soundsToPlay.size())
+	{
+		audio->playEffect(soundsToPlay.back().c_str());
+		soundsToPlay.pop_back();
+	}
 }
