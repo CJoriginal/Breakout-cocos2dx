@@ -23,7 +23,7 @@ bool Ball::init()
 
 	// Set Start Position and turn movement off
 	_moving = false;
-	 _startPosition = Vec2(winSize.width * 0.5f, winSize.height * 0.4f);
+	_startPosition = Vec2(winSize.width * 0.5f, winSize.height * 0.4f);
 
 	// Grab Ball Parameters
 	_radius = getContentSize().width / 2;
@@ -44,6 +44,8 @@ void Ball::update(float dt)
 	// If moving, update the ball position based on our magnitude and given velocity
 	if (_moving)
 	{
+		checkBounds();
+
 		_currentPosition = Vec2(clampf(_currentPosition.x + (_magnitude * _velocity.x * dt), _leftSide, _rightSide), clampf(_currentPosition.y + (_magnitude * _velocity.y * dt), _bottomSide, _topSide));
 		if (_magnitude != 200.0f)
 		{
@@ -54,7 +56,7 @@ void Ball::update(float dt)
 	}
 }
 
-void Ball::setup()
+void Ball::setup(SoundManager* sound)
 {
 	// If the ball is invisible, make it visible
 	if (!isVisible())
@@ -69,7 +71,13 @@ void Ball::setup()
 
 	// Initialise initial values
 	_hitTop = false;
+	_outOfBounds = false;
 	_magnitude = 200.0f;
+
+	if (sound)
+	{
+		_sound = sound;
+	}
 
 	if (std::round(rand_0_1()))
 	{
@@ -84,14 +92,14 @@ void Ball::setup()
 	_moving = true;
 }
 
-void Ball::handlePlayerCollision(const cocos2d::Sprite* player) 
+void Ball::handlePlayerCollision(const cocos2d::Sprite* player)
 {
 	const cocos2d::Size halfWidth = player->getBoundingBox().size;
 	const cocos2d::Vec2 playerPos = player->convertToWorldSpace(player->getPosition());
 
 	const float playerLeft = playerPos.x + halfWidth.width / 3;
 	const float playerRight = playerPos.x + (halfWidth.width / 3) * 2;
-	
+
 	const cocos2d::Size ballSize = getBoundingBox().size;
 	const cocos2d::Vec2 ballPos = convertToWorldSpace(getPosition());
 
@@ -100,10 +108,9 @@ void Ball::handlePlayerCollision(const cocos2d::Sprite* player)
 	if (ballCenter > playerLeft && ballCenter < playerRight)
 	{
 		_velocity.x *= 1.0f;
-	} 
+	}
 	else if (ballCenter < playerLeft || ballCenter > playerRight)
 	{
-		log("outer %f %f %f", _velocity.x, ballCenter, playerLeft);
 		if (ballCenter < playerLeft)
 		{
 			if (_velocity.x < 0.0f)
@@ -137,13 +144,13 @@ void Ball::handleBlockCollision()
 	_velocity.y *= -1.0f;
 }
 
-bool Ball::checkBounds(SoundManager* sound) {
+bool Ball::checkBounds() {
 	if (_currentPosition.x >= _rightSide || _currentPosition.x <= _leftSide)
 	{
 		// We are bouncing off the sides of the screen, invert the x velocity
 		_velocity.x *= -1.0f;
 
-		sound->PlayCollisionSound();
+		_sound->PlayCollisionSound();
 	}
 	else if (_topSide <= _currentPosition.y)
 	{
@@ -156,13 +163,13 @@ bool Ball::checkBounds(SoundManager* sound) {
 			_hitTop = true;
 		}
 
-		sound->PlayCollisionSound();
+		_sound->PlayCollisionSound();
 	}
 	else if (_bottomSide >= _currentPosition.y)
 	{
 		// We have hit the bottom of the screen, stop moving and prepare to be reset.
-		_moving = false;
-		return false;
+		_outOfBounds = true;
+		return (_moving = false);
 	}
 
 	return true;

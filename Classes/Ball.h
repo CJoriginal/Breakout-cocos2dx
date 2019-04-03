@@ -22,6 +22,10 @@ private:
 
 	bool _moving;
 	bool _hitTop;
+	bool _outOfBounds;
+
+	SoundManager* _sound;
+
 protected:
 	void update(float dt) override;
 public:
@@ -29,18 +33,19 @@ public:
 	CREATE_FUNC(Ball);
 	bool init() override;
 
-	void setup();
+	void setup(SoundManager* sound = nullptr);
 
 	inline cocos2d::Vec2& getVelocity() { return _velocity; }
 	inline void setVelocity(const cocos2d::Vec2& newVelocity) { _velocity = newVelocity; };
 
 	inline bool const increaseSpeed() { _magnitude *= 1.33f; return true; }
 	inline bool const hasTouchedTop() { return _hitTop; }
+	inline bool const isOutOfBounds() { return _outOfBounds; }
 
 	void handlePlayerCollision(const cocos2d::Sprite* player);
 	void handleBlockCollision();
 
-	bool checkBounds(SoundManager* sound);
+	bool checkBounds();
 };
 
 #endif // __BALL_H__

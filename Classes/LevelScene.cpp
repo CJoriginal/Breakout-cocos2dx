@@ -144,7 +144,7 @@ void Level::update(float dt)
 	if (_start)
 	{
 		// If ball has left the game, deduct a life
-		if (_ball && !_ball->checkBounds(_sound))
+		if (_ball->isOutOfBounds())
 		{
 			_lives -= 1;
 			updateLabelText(_livesLabel, "Lives: ", _lives);
@@ -153,7 +153,7 @@ void Level::update(float dt)
 			if (_lives)
 			{
 				_sound->PlayDeathSound();
-				_ball->setup();
+				_ball->setup(_sound);
 			}
 		}
 
@@ -172,7 +172,7 @@ void Level::update(float dt)
 				if (_isFirstScreen)
 				{
 					spawnBlocks();
-					_ball->setup();
+					_ball->setup(_sound);
 					_isFirstScreen = false;
 				}
 				else
@@ -225,7 +225,7 @@ void Level::onMouseUp(Event* event)
 			_ball = Ball::create();
 			this->addChild(_ball);
 		}
-		_ball->setup();
+		_ball->setup(_sound);
 
 		// Hide Labels when necessary
 		if (_startLabel->isVisible())
