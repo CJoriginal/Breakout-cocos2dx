@@ -146,7 +146,7 @@ bool Ball::checkBounds() {
 		// We are bouncing off the sides of the screen, invert the x velocity
 		clampVelocityX(-1.0f);
 
-		scheduleOnce(schedule_selector(SoundManager::PlayCollisionSound), 0.1f);
+		scheduleOnce(schedule_selector(SoundManager::playCollisionSound), 0.1f);
 	}
 	else if (_topSide <= _currentPosition.y)
 	{
@@ -159,7 +159,7 @@ bool Ball::checkBounds() {
 			_hitTop = true;
 		}
 
-		scheduleOnce(schedule_selector(SoundManager::PlayCollisionSound), 0.1f);
+		scheduleOnce(schedule_selector(SoundManager::playCollisionSound), 0.1f);
 	}
 	else if (_bottomSide >= _currentPosition.y)
 	{

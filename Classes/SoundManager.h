@@ -15,13 +15,13 @@ public:
 	SoundManager() {};
 	~SoundManager() {};
 
-	void Init(float dt);
+	void init(float dt);
 
-	void PlayPlayerSound(float dt);
-	void PlayCollisionSound(float dt);
-	void PlayDeathSound(float dt);
-	void PlayFailureSound(float dt);
-	void PlayWinSound(float dt);
+	void playPlayerSound(float dt);
+	void playCollisionSound(float dt);
+	void playDeathSound(float dt);
+	void playFailureSound(float dt);
+	void playWinSound(float dt);
 };
 
 #endif

@@ -39,6 +39,7 @@ private:
 	Ball* _ball;
 	BlockManager* _blocks;
 	SoundManager* _sound;
+	std::vector<cocos2d::PhysicsBody*> _bodiesHit;
 
 	cocos2d::Label* _scoreLabel;
 	cocos2d::Label* _livesLabel;
@@ -69,6 +70,7 @@ private:
 	void checkPlayerModifiers();
 	void resetModifiers();
 
+	void updateBlockHit(float dt);
 	void updateLabelText(cocos2d::Label* label, std::string text, int value);
 	void displayResultLabels(bool didWin);
 

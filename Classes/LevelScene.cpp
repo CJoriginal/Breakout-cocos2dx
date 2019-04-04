@@ -87,8 +87,8 @@ bool Level::init()
 	_blocks = new BlockManager();
 	spawnBlocks();
 
-	// Spawn Sound Manager
-	scheduleOnce(schedule_selector(SoundManager::Init), 0.1f);
+	// Initialise Sound Manager
+	scheduleOnce(schedule_selector(SoundManager::init), 0.1f);
 
 	// Add Event Listeners
 	auto mouseListener = EventListenerMouse::create();
@@ -118,7 +118,7 @@ void Level::update(float dt)
 			
 			if (_lives)
 			{
-				scheduleOnce(schedule_selector(SoundManager::PlayDeathSound), 0.1f);
+				scheduleOnce(schedule_selector(SoundManager::playDeathSound), 0.1f);
 				_ball->setup();
 			}
 		}
@@ -222,7 +222,7 @@ bool Level::onContactBegin(PhysicsContact &contact)
 				_ball->handlePlayerCollision(_player);
 
 				// Play Player Sound
-				scheduleOnce(schedule_selector(SoundManager::PlayPlayerSound), 0.1f);
+				scheduleOnce(schedule_selector(SoundManager::playPlayerSound), 0.1f);
 
 				_blockHit = false;
 			}
@@ -234,33 +234,16 @@ bool Level::onContactBegin(PhysicsContact &contact)
 				_ball->handleBlockCollision();
 				
 				//TODO Move Game Update Logic to Schedule Function
-				switch (b->getTag()) {
-					case 2:
-						_score += 7;
-						break;
-					case 3:
-						_score += 5;
-						break;
-					case 4:
-						_score += 3;
-						break;
-					case 5:
-						_score += 1;
-						break;
-				}
+				// Update Score
+				_bodiesHit.push_back(b);
+				scheduleOnce(schedule_selector(Level::updateBlockHit), 0.1f);
 
-				_blockCollisions += 1;
-
-				updateLabelText(_scoreLabel, "Score: ", _score);
-
-				checkBallModifiers(b->getTag());
-				checkPlayerModifiers();
-
+				// Disable Block
 				b->getOwner()->setVisible(false);
 				b->setEnabled(false);
 
 				// Play Sound Effect
-				scheduleOnce(schedule_selector(SoundManager::PlayCollisionSound), 0.1f);
+				scheduleOnce(schedule_selector(SoundManager::playCollisionSound), 0.1f);
 
 				_blockHit = true;
 			}
@@ -270,6 +253,39 @@ bool Level::onContactBegin(PhysicsContact &contact)
 	}
 
 	return false;
+}
+
+void Level::updateBlockHit(float dt)
+{
+	if (!_bodiesHit.size())
+	{
+		return;
+	}
+
+	for (const PhysicsBody* block : _bodiesHit)
+	{
+		switch (block->getTag()) {
+		case 2:
+			_score += 7;
+			break;
+		case 3:
+			_score += 5;
+			break;
+		case 4:
+			_score += 3;
+			break;
+		case 5:
+			_score += 1;
+			break;
+		}
+
+		_blockCollisions += 1;
+
+		updateLabelText(_scoreLabel, "Score: ", _score);
+
+		checkBallModifiers(block->getTag());
+		checkPlayerModifiers();
+	}
 }
 
 bool Level::spawnLabels(const Vec2& origin, const Size& winSize)
@@ -433,12 +449,12 @@ void Level::displayResultLabels(bool didWin)
 	if (didWin)
 	{
 		resultText = "Congratulations! You won!";
-		scheduleOnce(schedule_selector(SoundManager::PlayWinSound), 0.1f);
+		scheduleOnce(schedule_selector(SoundManager::playWinSound), 0.1f);
 	}
 	else
 	{
 		resultText = "Game Over";
-		scheduleOnce(schedule_selector(SoundManager::PlayFailureSound), 0.1f);
+		scheduleOnce(schedule_selector(SoundManager::playFailureSound), 0.1f);
 	}
 
 	std::string startText = "Click to play again.";
