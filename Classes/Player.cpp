@@ -11,7 +11,7 @@ bool Player::init()
 		return false;
 	}
 
-	speed = 600.0f;
+	_speed = 600.0f;
 
 	// Add Physics Body
 	auto body = PhysicsBody::createBox(getContentSize());
@@ -36,12 +36,15 @@ bool Player::init()
 
 	scheduleUpdate();
 
+	_moving = false;
+	_pause = false;
+
 	return true;
 }
 
 void Player::update(float dt) 
 {
-	if (moving)
+	if (_moving)
 	{
 		move(dt);
 	}
@@ -49,28 +52,30 @@ void Player::update(float dt)
 
 void Player::onKeyPressed(EventKeyboard::KeyCode keyCode, Event* event)
 {
-	switch (keyCode) {
+	switch (keyCode)
+	{
 		case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
 			// Move Player Left
-			direction = 0;
-			moving = true;
+			_direction = 0;
+			_moving = true;
 			break;
 		case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
 			// Move Player Right
-			direction = 1;
-			moving = true;
+			_direction = 1;
+			_moving = true;
 			break;
 	}
 }
 
 void Player::onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event)
 {
-	switch (keyCode) {
+	switch (keyCode)
+	{
 		case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
 		case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
 		default:
 			// Player is idle, stop moving
-			moving = false;
+			_moving = false;
 			break;
 	}
 }
@@ -78,28 +83,24 @@ void Player::onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event)
 bool Player::move(float dt)
 {
 	// Check we are moving
-	if (!moving)
+	if (!_moving)
 	{
 		return false;
 	}
 
 	Vec2 currentPosition = getPosition();
 	
-	float newX = currentPosition.x;
-
 	// Update current x co-ordinate with new movement
-	if (direction)
+	if (_direction)
 	{
-		newX += speed * dt;
+		currentPosition.x = clampf(currentPosition.x + _speed * dt, _leftSide, _rightSide);
 	}
 	else
 	{
-		newX += -speed * dt;
+		currentPosition.x = clampf(currentPosition.x + -_speed * dt, _leftSide, _rightSide);
 	}
 
-	newX = clampf(newX, _leftSide, _rightSide);
-
-	setPosition(newX, currentPosition.y);
+	setPosition(currentPosition);
 
 	return true;
 }

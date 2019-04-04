@@ -8,15 +8,17 @@ class Ball;
 class Player : public cocos2d::Sprite
 {
 private:
-	bool move(float dt);
-	bool moving;
+	bool _moving;
+	bool _pause;
 
 	float _leftSide;
 	float _rightSide;
 
 	// 0 - Left, 1 - Right
-	int direction;
-	float speed;
+	int _direction;
+	float _speed;
+
+	bool move(float dt);
 protected:
 	void update(float dt) override;
 	void onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event);
@@ -26,8 +28,6 @@ public:
 	CREATE_FUNC(Player);
 	bool init() override;
 	bool half();
-
-	void handleBallCollision(cocos2d::Vec2 contactPoint);
 };
 
 #endif // __PLAYER_H__
