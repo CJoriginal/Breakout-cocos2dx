@@ -111,11 +111,11 @@ void Ball::handlePlayerCollision(const cocos2d::Sprite* player)
 		{
 			if (_velocity.x < 0.0f)
 			{
-				clampVelocityX(2.0f);
+				clampVelocityX(0.5f);
 			}
 			else
 			{
-				clampVelocityX(-0.5f);
+				clampVelocityX(-2.0f);
 			}
 		}
 		else
