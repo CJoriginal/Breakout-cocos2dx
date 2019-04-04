@@ -405,7 +405,7 @@ void Level::checkPlayerModifiers()
 	{
 		if (_redHit && _ball->hasTouchedTop())
 		{
-			_halvedPlayer = _player->half();
+			_halvedPlayer = _player->scale();
 		}
 	}
 }
@@ -420,7 +420,7 @@ void Level::resetModifiers()
 	_halvedPlayer = false;
 
 	// Reset Player Size
-	_player->setScale(1.0f);
+	_player->scale(true);
 
 	// Reset Collisions
 	_blockCollisions = 0;

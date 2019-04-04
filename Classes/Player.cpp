@@ -11,10 +11,11 @@ bool Player::init()
 		return false;
 	}
 
+	_size = getContentSize();
 	_speed = 600.0f;
 
 	// Add Physics Body
-	auto body = PhysicsBody::createBox(getContentSize());
+	auto body = PhysicsBody::createBox(_size);
 	body->setDynamic(false);
 	body->setCollisionBitmask(1);
 	body->setContactTestBitmask(true);
@@ -105,9 +106,17 @@ bool Player::move(float dt)
 	return true;
 }
 
-bool Player::half()
+
+bool Player::scale(bool full)
 {
-	// Reduce player by half
-	setScale(0.5f);
+	// Scale Player Appropiately
+	if (full)
+	{
+		setContentSize(_size);
+	}
+	else
+	{
+		setContentSize(_size / 2);
+	}
 	return true;
 }

@@ -8,6 +8,8 @@ class Ball;
 class Player : public cocos2d::Sprite
 {
 private:
+	cocos2d::Size _size;
+
 	bool _moving;
 	bool _pause;
 
@@ -27,7 +29,7 @@ public:
 	// implement the "static create()" method manually
 	CREATE_FUNC(Player);
 	bool init() override;
-	bool half();
+	bool scale(bool full = false);
 };
 
 #endif // __PLAYER_H__
