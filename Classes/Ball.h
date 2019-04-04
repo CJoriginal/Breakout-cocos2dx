@@ -3,8 +3,6 @@
 
 #include "cocos2d.h"
 
-class SoundManager;
-
 // A Sprite Class to represent and handle collision for the ball.
 class Ball : public cocos2d::Sprite
 {
@@ -25,8 +23,6 @@ private:
 	bool _hitTop;
 	bool _outOfBounds;
 
-	SoundManager* _sound;
-
 	void const clampVelocityX(float adjust);
 
 protected:
@@ -36,7 +32,7 @@ public:
 	CREATE_FUNC(Ball);
 	bool init() override;
 
-	void setup(SoundManager* sound = nullptr);
+	void setup();
 
 	inline cocos2d::Vec2& getVelocity() { return _velocity; }
 

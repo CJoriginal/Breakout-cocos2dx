@@ -52,7 +52,7 @@ void Ball::update(float dt)
 	}
 }
 
-void Ball::setup(SoundManager* sound)
+void Ball::setup()
 {
 	// If the ball is invisible, make it visible
 	if (!isVisible())
@@ -69,11 +69,6 @@ void Ball::setup(SoundManager* sound)
 	_hitTop = false;
 	_outOfBounds = false;
 	_magnitude = 200.0f;
-
-	if (sound)
-	{
-		_sound = sound;
-	}
 
 	if (std::round(rand_0_1()))
 	{
@@ -151,7 +146,7 @@ bool Ball::checkBounds() {
 		// We are bouncing off the sides of the screen, invert the x velocity
 		clampVelocityX(-1.0f);
 
-		_sound->PlayCollisionSound();
+		scheduleOnce(schedule_selector(SoundManager::PlayCollisionSound), 0.1f);
 	}
 	else if (_topSide <= _currentPosition.y)
 	{
@@ -164,7 +159,7 @@ bool Ball::checkBounds() {
 			_hitTop = true;
 		}
 
-		_sound->PlayCollisionSound();
+		scheduleOnce(schedule_selector(SoundManager::PlayCollisionSound), 0.1f);
 	}
 	else if (_bottomSide >= _currentPosition.y)
 	{

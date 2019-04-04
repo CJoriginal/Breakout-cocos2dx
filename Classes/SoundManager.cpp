@@ -1,84 +1,37 @@
 #include "SoundManager.h"
-#include "SimpleAudioEngine.h"
+#include "audio/include/AudioEngine.h"
+using namespace cocos2d::experimental;
 
 USING_NS_CC;
 
-SoundManager::SoundManager()
+void SoundManager::Init(float dt)
 {
-	// Set audio paths
-	playerSound = "PlayerSound.mp3";
-	collisionSound = "CollisionSound.mp3";
-	deathSound = "DeathSound.mp3";
-	failureSound = "FailureSound.mp3";
-	winSound = "WinSound.mp3";
-
-	if (!PreloadSound())
-	{
-		log("SoundManager::PreloadSound: Could not preload sound effects - check files");
-		return;
-	}
+	// Preload Common Sound Effects
+	AudioEngine::preload(PLAYER_COLLISION_SFX);
+	AudioEngine::preload(NORMAL_COLLISION_SFX);
 }
 
-
-SoundManager::~SoundManager()
+void SoundManager::PlayPlayerSound(float dt)
 {
+	AudioEngine::play2d(PLAYER_COLLISION_SFX);
 }
 
-bool SoundManager::PreloadSound()
+void SoundManager::PlayCollisionSound(float dt)
 {
-	// Preload Sound Effects
-	CocosDenshion::SimpleAudioEngine* audio = CocosDenshion::SimpleAudioEngine::getInstance();
-	audio->preloadEffect(playerSound.c_str());
-	audio->preloadEffect(collisionSound.c_str());
-	audio->preloadEffect(deathSound.c_str());
-	audio->preloadEffect(failureSound.c_str());
-	audio->preloadEffect(winSound.c_str());
-
-	return true;
+	AudioEngine::play2d(NORMAL_COLLISION_SFX);
 }
 
-bool SoundManager::PlayPlayerSound()
+void SoundManager::PlayDeathSound(float dt)
 {
-	soundsToPlay.push_back(playerSound.c_str());
-	return true;
+	AudioEngine::play2d(PLAYER_DEATH_SFX);
 }
 
-bool SoundManager::PlayCollisionSound()
+void SoundManager::PlayFailureSound(float dt)
 {
-	soundsToPlay.push_back(collisionSound.c_str());
-	return true;
+	AudioEngine::play2d(FAIL_SFX);
 }
 
-bool SoundManager::PlayDeathSound()
+void SoundManager::PlayWinSound(float dt)
 {
-	soundsToPlay.push_back(deathSound.c_str());
-	return true;
-}
-
-bool SoundManager::PlayFailureSound()
-{
-	soundsToPlay.push_back(failureSound.c_str());
-	return true;
-}
-
-bool SoundManager::PlayWinSound()
-{
-	soundsToPlay.push_back(winSound.c_str());
-	return true;
-}
-
-void SoundManager::PlayEffects(float dt)
-{
-	if (!soundsToPlay.size())
-	{
-		return;
-	}
-
-
-	CocosDenshion::SimpleAudioEngine* audio = CocosDenshion::SimpleAudioEngine::getInstance();
-	while (soundsToPlay.size())
-	{
-		audio->playEffect(soundsToPlay.back().c_str());
-		soundsToPlay.pop_back();
-	}
+	AudioEngine::play2d(WIN_SFX);
 }

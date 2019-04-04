@@ -122,7 +122,7 @@ bool Level::init()
 	spawnBlocks();
 
 	// Spawn Sound Manager
-	_sound = new SoundManager();
+	scheduleOnce(schedule_selector(SoundManager::Init), 0.1f);
 
 	// Add Event Listeners
 	auto mouseListener = EventListenerMouse::create();
@@ -152,8 +152,8 @@ void Level::update(float dt)
 			
 			if (_lives)
 			{
-				_sound->PlayDeathSound();
-				_ball->setup(_sound);
+				scheduleOnce(schedule_selector(SoundManager::PlayDeathSound), 0.1f);
+				_ball->setup();
 			}
 		}
 
@@ -172,7 +172,7 @@ void Level::update(float dt)
 				if (_isFirstScreen)
 				{
 					spawnBlocks();
-					_ball->setup(_sound);
+					_ball->setup();
 					_isFirstScreen = false;
 				}
 				else
@@ -182,8 +182,6 @@ void Level::update(float dt)
 				}
 			}
 		}
-
-		_sound->PlayEffects(dt);
 	}
 }
 
@@ -227,7 +225,7 @@ void Level::onMouseUp(Event* event)
 			_ball = Ball::create();
 			this->addChild(_ball);
 		}
-		_ball->setup(_sound);
+		_ball->setup();
 
 		// Hide Labels when necessary
 		if (_startLabel->isVisible())
@@ -258,7 +256,7 @@ bool Level::onContactBegin(PhysicsContact &contact)
 				_ball->handlePlayerCollision(_player);
 
 				// Play Player Sound
-				_sound->PlayPlayerSound();
+				scheduleOnce(schedule_selector(SoundManager::PlayPlayerSound), 0.1f);
 
 				_blockHit = false;
 			}
@@ -269,6 +267,7 @@ bool Level::onContactBegin(PhysicsContact &contact)
 			{
 				_ball->handleBlockCollision();
 				
+				//TODO Move Game Update Logic to Schedule Function
 				switch (b->getTag()) {
 					case 2:
 						_score += 7;
@@ -294,7 +293,7 @@ bool Level::onContactBegin(PhysicsContact &contact)
 				b->getOwner()->removeFromParentAndCleanup(true);
 
 				// Play Sound Effect
-				_sound->PlayCollisionSound();
+				scheduleOnce(schedule_selector(SoundManager::PlayCollisionSound), 0.1f);
 
 				_blockHit = true;
 			}
@@ -467,12 +466,12 @@ void Level::displayResultLabels(bool didWin)
 	if (didWin)
 	{
 		resultText = "Congratulations! You won!";
-		_sound->PlayWinSound();
+		scheduleOnce(schedule_selector(SoundManager::PlayWinSound), 0.1f);
 	}
 	else
 	{
 		resultText = "Game Over";
-		_sound->PlayFailureSound();
+		scheduleOnce(schedule_selector(SoundManager::PlayFailureSound), 0.1f);
 	}
 
 	std::string startText = "Click to play again.";
