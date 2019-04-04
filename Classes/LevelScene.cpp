@@ -262,24 +262,14 @@ void Level::updateBlockHit(float dt)
 		return;
 	}
 
-	for (const PhysicsBody* block : _bodiesHit)
+	while (_bodiesHit.size())
 	{
-		switch (block->getTag()) {
-		case 2:
-			_score += 7;
-			break;
-		case 3:
-			_score += 5;
-			break;
-		case 4:
-			_score += 3;
-			break;
-		case 5:
-			_score += 1;
-			break;
-		}
+		const PhysicsBody* block = _bodiesHit.back();
+		_bodiesHit.pop_back();
 
-		_blockCollisions += 1;
+		_score += (block->getTag() - 1);
+
+		_blockCollisions++;
 
 		updateLabelText(_scoreLabel, "Score: ", _score);
 
@@ -370,13 +360,13 @@ void Level::checkBallModifiers(int tag)
 	if (!_redHit || !_orangeHit)
 	{
 		// If we hit an red block, mark it
-		if (tag == 2)
+		if (tag == 8)
 		{
 			_redHit = true;
 		}
 
 		// If we hit an orange block, mark it
-		if (tag == 3)
+		if (tag == 6)
 		{
 			_orangeHit = true;
 		}

@@ -24,7 +24,6 @@ private:
 	bool _outOfBounds;
 
 	void const clampVelocityX(float adjust);
-
 protected:
 	void update(float dt) override;
 public:
