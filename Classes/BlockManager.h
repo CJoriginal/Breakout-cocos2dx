@@ -20,6 +20,7 @@ public:
 
 	// Utility Functions
 	bool spawnBlocks(cocos2d::Scene* parent);
+	void revealBlocks();
 };
 
 #endif __BLOCKMANAGER_H__

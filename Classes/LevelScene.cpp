@@ -75,40 +75,6 @@ bool Level::init()
 	background->drawSolidRect(origin, winSize * 2, Color4F(0.6f, 0.6f, 0.6f, 1.0f));
 	this->addChild(background);
 
-	/*auto wallOne = Sprite::create("wall.png");
-	wallOne->setPosition(Vec2(50.0f, winSize.height - 500.0f));
-
-	auto wallOneBody = PhysicsBody::createBox(wallOne->getContentSize());
-	wallOneBody->setDynamic(false);
-	wallOneBody->setCollisionBitmask(2);
-	wallOneBody->setContactTestBitmask(true);
-
-	wallOne->setPhysicsBody(wallOneBody);
-
-	auto wallTwo = Sprite::create("wall.png");
-	wallTwo->setPosition(Vec2(winSize.width - 45.0f, winSize.height - 500.0f));
-
-	auto wallTwoBody = PhysicsBody::createBox(wallTwo->getContentSize());
-	wallTwoBody->setDynamic(false);
-	wallTwoBody->setCollisionBitmask(2);
-	wallTwoBody->setContactTestBitmask(true);
-
-	wallTwo->setPhysicsBody(wallTwoBody);
-
-	auto roof = Sprite::create("roof.png");
-	roof->setPosition(Vec2(winSize.width / 2 + 3.0f, winSize.height - 148.0f));
-
-	auto roofBody = PhysicsBody::createBox(roof->getContentSize());
-	roofBody->setDynamic(false);
-	roofBody->setCollisionBitmask(2);
-	roofBody->setContactTestBitmask(true);
-
-	roof->setPhysicsBody(roofBody);
-
-	this->addChild(wallOne);
-	this->addChild(wallTwo);
-	this->addChild(roof);*/
-
 	// Spawn Labels
 	spawnLabels(origin, winSize);
 
@@ -171,7 +137,7 @@ void Level::update(float dt)
 				// If this is the first screen, reset and prepare for the second screen
 				if (_isFirstScreen)
 				{
-					spawnBlocks();
+					_blocks->revealBlocks();
 					_ball->setup();
 					_isFirstScreen = false;
 				}
@@ -213,7 +179,7 @@ void Level::onMouseUp(Event* event)
 		// If this is another attempt, reset the scene before starting
 		if (_reset)
 		{
-			_blocks->spawnBlocks(this);
+			_blocks->revealBlocks();
 			updateLabelText(_scoreLabel, "Score: ", _score);
 			updateLabelText(_livesLabel, "Lives: ", _lives);
 			_reset = false;
@@ -290,7 +256,8 @@ bool Level::onContactBegin(PhysicsContact &contact)
 				checkBallModifiers(b->getTag());
 				checkPlayerModifiers();
 
-				b->getOwner()->removeFromParentAndCleanup(true);
+				b->getOwner()->setVisible(false);
+				b->setEnabled(false);
 
 				// Play Sound Effect
 				scheduleOnce(schedule_selector(SoundManager::PlayCollisionSound), 0.1f);

@@ -89,3 +89,15 @@ const std::vector<std::vector<GameBlock*>> BlockManager::getBlocks()
 {
 	return _blocks;
 }
+
+void BlockManager::revealBlocks()
+{
+	for(const std::vector<GameBlock*> blockRow : _blocks)
+	{
+		for (GameBlock* block : blockRow)
+		{
+			block->setVisible(true);
+			block->getPhysicsBody()->setEnabled(true);
+		}
+	}
+}
