@@ -51,6 +51,7 @@ private:
 	int _score;
 	int _lives;
 	int _blockCollisions;
+	int _activeCollisions;
 
 	bool _start;
 	bool _reset;

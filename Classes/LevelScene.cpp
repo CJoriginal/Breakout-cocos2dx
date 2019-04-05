@@ -132,13 +132,12 @@ void Level::update(float dt)
 		}
 		else
 		{
-			if (!_blocks->getSize())
+			if (_blockCollisions == 112)
 			{
 				// If this is the first screen, reset and prepare for the second screen
 				if (_isFirstScreen)
 				{
 					_blocks->revealBlocks();
-					_ball->setup();
 					_isFirstScreen = false;
 				}
 				else
@@ -146,6 +145,8 @@ void Level::update(float dt)
 					// Display Victory Screen
 					displayResultLabels(true);
 				}
+
+				_blockCollisions = 0;
 			}
 		}
 	}
@@ -180,9 +181,12 @@ void Level::onMouseUp(Event* event)
 		if (_reset)
 		{
 			_blocks->revealBlocks();
+			resetModifiers();
 			updateLabelText(_scoreLabel, "Score: ", _score);
 			updateLabelText(_livesLabel, "Lives: ", _lives);
 			_reset = false;
+			_isFirstScreen = true;
+			_blockCollisions = 0;
 		}
 
 		// Spawn Wrecking Ball if not already created
@@ -233,7 +237,6 @@ bool Level::onContactBegin(PhysicsContact &contact)
 			{
 				_ball->handleBlockCollision();
 				
-				//TODO Move Game Update Logic to Schedule Function
 				// Update Score
 				_bodiesHit.push_back(b);
 				scheduleOnce(schedule_selector(Level::updateBlockHit), 0.1f);
@@ -270,6 +273,7 @@ void Level::updateBlockHit(float dt)
 		_score += (block->getTag() - 1);
 
 		_blockCollisions++;
+		_activeCollisions++;
 
 		updateLabelText(_scoreLabel, "Score: ", _score);
 
@@ -382,7 +386,7 @@ void Level::checkBallModifiers(int tag)
 	if (!_firstBoost)
 	{
 		// If we have hit 4 blocks, increase speed
-		if (_blockCollisions == 4)
+		if (_activeCollisions == 4)
 		{
 			_firstBoost = _ball->increaseSpeed();
 		}
@@ -390,7 +394,7 @@ void Level::checkBallModifiers(int tag)
 
 	if (!_secondBoost) {
 		// if we have hit 12 blocks, increase speed
-		if (_blockCollisions == 12)
+		if (_activeCollisions == 12)
 		{
 			_secondBoost = _ball->increaseSpeed();
 		}
@@ -423,7 +427,7 @@ void Level::resetModifiers()
 	_player->scale(true);
 
 	// Reset Collisions
-	_blockCollisions = 0;
+	_activeCollisions = 0;
 }
 
 void Level::updateLabelText(Label* label, std::string text, int value)
