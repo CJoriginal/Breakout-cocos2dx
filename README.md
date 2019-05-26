@@ -3,7 +3,7 @@
 # Breakout-cocos2dx
 A small game project inspired by the original Breakout game, built to try out the [cocos-2dx C++ framework](https://cocos2d-x.org/products#cocos2d-x).
 
-![cocos2dx](https://raw.githubusercontent.com/CJoriginal/Breakout-cocos2dx/master/Resources/HelloWorld.png?token=ABSCEK2HMDML4W6MOAYN74K46QRB6)
+![cocos2dx](https://raw.githubusercontent.com/CJoriginal/Breakout-cocos2dx/master/Resources/cocos2dx.png?token=ABSCEKZRQ2O7Q7RITJXZYWC46QXOY)
 
 ## How to play
 
