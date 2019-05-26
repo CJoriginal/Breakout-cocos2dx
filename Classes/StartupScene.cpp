@@ -22,26 +22,26 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-#include "HelloWorldScene.h"
+#include "StartupScene.h"
 #include "SimpleAudioEngine.h"
 #include "LevelScene.h"
 
 USING_NS_CC;
 
-Scene* HelloWorld::createScene()
+Scene* Startup::createScene()
 {
-    return HelloWorld::create();
+    return Startup::create();
 }
 
 // Print useful error message instead of segfaulting when files are not there.
 static void problemLoading(const char* filename)
 {
     printf("Error while loading: %s\n", filename);
-    printf("Depending on how you compiled you might have to add 'Resources/' in front of filenames in HelloWorldScene.cpp\n");
+    printf("Depending on how you compiled you might have to add 'Resources/' in front of filenames in StartupScene.cpp\n");
 }
 
 // on "init" you need to initialize your instance
-bool HelloWorld::init()
+bool Startup::init()
 {
     //////////////////////////////
     // 1. super init first
@@ -68,7 +68,7 @@ bool HelloWorld::init()
         this->addChild(label, 1);
     }
 
-    // add "HelloWorld" splash screen"
+    // add icon to splash screen
     auto sprite = Sprite::create("HelloWorld.png");
     if (sprite == nullptr)
     {
@@ -83,12 +83,12 @@ bool HelloWorld::init()
         this->addChild(sprite, 0);
     }
 
-	scheduleOnce(schedule_selector(HelloWorld::openLevelCallback), 3.0f);
+	scheduleOnce(schedule_selector(Startup::openLevelCallback), 3.0f);
 
     return true;
 }
 
-void HelloWorld::openLevelCallback(float dt)
+void Startup::openLevelCallback(float dt)
 {
 	Director::getInstance()->replaceScene(TransitionFade::create(0.5f, Level::createScene(), Color3B(0, 255, 255)));
 }

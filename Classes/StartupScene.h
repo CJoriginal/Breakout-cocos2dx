@@ -22,12 +22,12 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-#ifndef __HELLOWORLD_SCENE_H__
-#define __HELLOWORLD_SCENE_H__
+#ifndef __STARTUP_SCENE_H__
+#define __STARTUP_SCENE_H__
 
 #include "cocos2d.h"
 
-class HelloWorld : public cocos2d::Scene
+class Startup : public cocos2d::Scene
 {
 public:
     static cocos2d::Scene* createScene();
@@ -40,7 +40,7 @@ public:
 	void openLevelCallback(float dt);
     
     // implement the "static create()" method manually
-    CREATE_FUNC(HelloWorld);
+    CREATE_FUNC(Startup);
 };
 
-#endif // __HELLOWORLD_SCENE_H__
+#endif // __STARTUP_SCENE_H__

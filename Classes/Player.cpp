@@ -56,11 +56,13 @@ void Player::onKeyPressed(EventKeyboard::KeyCode keyCode, Event* event)
 	switch (keyCode)
 	{
 		case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
+		case EventKeyboard::KeyCode::KEY_A:
 			// Move Player Left
 			_direction = 0;
 			_moving = true;
 			break;
 		case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
+		case EventKeyboard::KeyCode::KEY_D:
 			// Move Player Right
 			_direction = 1;
 			_moving = true;
@@ -73,7 +75,9 @@ void Player::onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event)
 	switch (keyCode)
 	{
 		case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
+		case EventKeyboard::KeyCode::KEY_A:
 		case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
+		case EventKeyboard::KeyCode::KEY_D:
 		default:
 			// Player is idle, stop moving
 			_moving = false;
