@@ -69,10 +69,10 @@ bool Startup::init()
     }
 
     // add icon to splash screen
-    auto sprite = Sprite::create("HelloWorld.png");
+    auto sprite = Sprite::create("cocos2dx.png");
     if (sprite == nullptr)
     {
-        problemLoading("'HelloWorld.png'");
+        problemLoading("'cocos2dx.png'");
     }
     else
     {
